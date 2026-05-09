@@ -78,8 +78,8 @@ public class BookListener implements Listener {
         instance.saveOrUpdateCachedBlu3print(uuid, blu3printData);
         finishedBook.setAmount(1);
         player.getInventory().addItem(finishedBook);
-        player.sendMessage("You have finished your blu3print!");
-        instance.getLogger().info("Finished blu3print: " + blu3printData.getEncodedString());
+        player.sendMessage("You have finished your blueprint!");
+        instance.getLogger().info("Finished blueprint: " + blu3printData.getEncodedString());
     }
 
     private String extractLocation(ItemMeta meta, String key) {

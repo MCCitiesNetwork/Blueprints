@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,6 +18,8 @@ import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.enums.Config;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ConfigCommand implements CommandExecutor {
 
@@ -36,20 +37,20 @@ public class ConfigCommand implements CommandExecutor {
                     for (Config cc : Config.values()) {
                         sb.append(cc.name()).append(" ");
                     }
-                    player.sendMessage(ChatColor.RED + "Not valid subcommand try : " + sb.toString());
+                    player.sendMessage(Component.text("Not valid subcommand try : " + sb.toString(), NamedTextColor.RED));
                     return true;
                 }
             }
 
             ItemStack blu3print = InventoryUtils.getHeldBlu3print(player, false);
             if (blu3print == null || !blu3print.hasItemMeta()) {
-                sender.sendMessage(ChatColor.RED + "You must be holding a blu3print to duplicate it.");
+                sender.sendMessage(Component.text("You must be holding a blueprint to duplicate it.", NamedTextColor.RED));
                 return true;
             }
             ItemMeta meta = blu3print.getItemMeta();
             List<String> lore = meta.getLore();
             if (lore == null || lore.size() < 2) {
-                player.sendMessage(ChatColor.RED + "Blu3print missing ID");
+                player.sendMessage(Component.text("Blueprint missing ID", NamedTextColor.RED));
                 return true;
             }
             String blu3printUuid = lore.get(1);
@@ -62,7 +63,7 @@ public class ConfigCommand implements CommandExecutor {
             switch (config) {
                 case CLEAR:
                     Blueprints.setPlayerBlueprintConfig(playerUUID, null);
-                    player.sendMessage(ChatColor.GREEN + "Player blu3print config reset!");
+                    player.sendMessage(Component.text("Player blueprint config reset!", NamedTextColor.GREEN));
                     return true;
                 case HOLOGRAM_VIEW_XYZ:
                 case HOLOGRAM_VIEW_X:
@@ -87,7 +88,7 @@ public class ConfigCommand implements CommandExecutor {
     private PlayerBlueprintConfig setHologramViewLayers(PlayerBlueprintConfig ppbc, String[] args, Config config,
             Player player) {
         if (args.length < 2 || (config == Config.HOLOGRAM_VIEW_XYZ && args.length < 4)) {
-            player.sendMessage(ChatColor.RED + "Not enough arguments for setting hologram view layers");
+            player.sendMessage(Component.text("Not enough arguments for setting hologram view layers", NamedTextColor.RED));
             return null;
         }
         int[][] layers = ppbc.getHologramViewLayers();
@@ -109,7 +110,6 @@ public class ConfigCommand implements CommandExecutor {
         }
         StringBuilder sb = new StringBuilder();
         boolean restricted = false;
-        sb.append(ChatColor.GREEN);
         sb.append("Hologram will now show");
         if (layers[0] != null) {
             restricted = true;
@@ -126,7 +126,7 @@ public class ConfigCommand implements CommandExecutor {
         if (!restricted) {
             sb.append(" completely");
         }
-        player.sendMessage(sb.toString());
+        player.sendMessage(Component.text(sb.toString(), NamedTextColor.GREEN));
         ppbc.setHologramViewLayers(layers);
 
         return ppbc;
@@ -175,30 +175,30 @@ public class ConfigCommand implements CommandExecutor {
     private PlayerBlueprintConfig modifyMaterialIgnoreList(PlayerBlueprintConfig ppbc, String[] args, Config config,
             Player player) {
         if (args.length < 2) {
-            player.sendMessage("Usage: /blu3print.config IGNORE_MATERIALS [material]");
+            player.sendMessage("Usage: /blueprint.config IGNORE_MATERIALS [material]");
             return ppbc;
         }
         Material material; 
         try {
             material = Material.matchMaterial(args[1]);
             if (material == null) {
-                player.sendMessage(ChatColor.RED + "Invalid material : " + args[1]);
+                player.sendMessage(Component.text("Invalid material : " + args[1], NamedTextColor.RED));
                 return ppbc;
             }
         } catch (Exception e) {
-            player.sendMessage(ChatColor.RED + "Invalid material : " + args[1]);
+            player.sendMessage(Component.text("Invalid material : " + args[1], NamedTextColor.RED));
             return ppbc;
         }
         
         List<String> ignoredMaterials = ppbc.getIgnoredMaterials();
         if (config == Config.IGNORE_MATERIAL) {
             if (GlobalConfig.isVerboseLogging()) {
-                player.sendMessage(ChatColor.GREEN + "Added " + material.name() + " to ignore list");
+                player.sendMessage(Component.text("Added " + material.name() + " to ignore list", NamedTextColor.GREEN));
             }
             ignoredMaterials.add(material.name().toUpperCase());
         } else {
             if (GlobalConfig.isVerboseLogging()) {
-                player.sendMessage(ChatColor.RED + "Remooved " + material.name() + " from ignore list");
+                player.sendMessage(Component.text("Remooved " + material.name() + " from ignore list", NamedTextColor.RED));
             }
             ignoredMaterials.removeIf(m -> m.equalsIgnoreCase(material.name()));
         }

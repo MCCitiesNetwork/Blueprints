@@ -38,7 +38,7 @@ public final class CommandSupport {
     public static BlueprintData lookupCached(Player player, ItemStack item) {
         BlueprintData data = Blueprints.getInstance().getBlueprintFromCache(item, player);
         if (data == null) {
-            player.sendMessage("Blu3print data not found");
+            player.sendMessage("Blueprint data not found");
         }
         return data;
     }

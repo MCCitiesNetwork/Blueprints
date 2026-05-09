@@ -17,7 +17,7 @@ public class RotateCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             ItemStack item = CommandSupport.requireHeldBlueprint(sender, player,
-                    "You must be holding a blu3print to rotate it.");
+                    "You must be holding a blueprint to rotate it.");
             if (item == null) {
                 return true;
             }

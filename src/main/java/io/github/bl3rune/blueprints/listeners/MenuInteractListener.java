@@ -1,19 +1,21 @@
 package io.github.bl3rune.blueprints.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import io.github.bl3rune.blueprints.commands.BlueprintCommand;
 import io.github.bl3rune.blueprints.enums.CommandType;
 import io.github.bl3rune.blueprints.enums.MenuItems;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class MenuInteractListener implements Listener {
 
     @EventHandler
     public void onMenuClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals(ChatColor.BLUE + "Blu3print Menu")) {
+        if (event.getView().title().equals(BlueprintCommand.BLU3PRINT_MENU_TITLE)) {
             event.setCancelled(true);
 
             if (event.isRightClick())
@@ -23,7 +25,9 @@ public class MenuInteractListener implements Listener {
             if (event.getCurrentItem() == null) {
                 return;
             }
-            String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+            String itemName = PlainTextComponentSerializer.plainText().serialize(
+                    LegacyComponentSerializer.legacySection().deserialize(
+                            event.getCurrentItem().getItemMeta().getDisplayName()));
             MenuItems menuItem = MenuItems.getMenuItem(itemName);
             if (menuItem == null) return;
             switch (menuItem) {

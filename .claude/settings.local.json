@@ -5,7 +5,8 @@
       "Bash(git mv *)",
       "Bash(xargs -0 sed -i 's/\\\\bBlu3PrintPlugin\\\\b/Blueprints/g')",
       "Bash(./gradlew build *)",
-      "Bash(./gradlew.bat compileJava --quiet)"
+      "Bash(./gradlew.bat compileJava --quiet)",
+      "Bash(./gradlew.bat compileJava test)"
     ]
   }
 }

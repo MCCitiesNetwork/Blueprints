@@ -1,7 +1,6 @@
 package io.github.bl3rune.blueprints.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -16,6 +15,8 @@ import org.bukkit.entity.Player;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.data.MaterialData;
 import io.github.bl3rune.blueprints.enums.Orientation;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class EdgeCaseBlockUtils {
 
@@ -80,7 +81,7 @@ public class EdgeCaseBlockUtils {
 
         }
         if (o == null || !o.isCompass()) {
-            player.sendMessage(ChatColor.RED + "Bed is not flat, cannot place");
+            player.sendMessage(Component.text("Bed is not flat, cannot place", NamedTextColor.RED));
             return;
         }
         final BlockFace facing = o.getBlockFace();
@@ -100,7 +101,7 @@ public class EdgeCaseBlockUtils {
         Block block = location.getBlock();
         Orientation o = materialData.getFace();
         if (!o.isCompass()) {
-            player.sendMessage(ChatColor.RED + "Door is not vertical, cannot place");
+            player.sendMessage(Component.text("Door is not vertical, cannot place", NamedTextColor.RED));
             return;
         }
         final BlockFace facing = o.getBlockFace();

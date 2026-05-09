@@ -64,9 +64,9 @@ public final class BlueprintCacheService {
     public BlueprintData get(ItemStack blu3print, Player player) {
         String key = BlueprintItem.extractCacheKeyFromBlu3print(blu3print);
         if (key == null) {
-            logger.warning("Blu3print ID is missing from the server cache");
+            logger.warning("Blueprint ID is missing from the server cache");
             if (player != null) {
-                player.sendMessage("Blu3print ID is missing from the server cache");
+                player.sendMessage("Blueprint ID is missing from the server cache");
             }
         }
         return get(key);

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +18,8 @@ import io.github.bl3rune.blueprints.utils.EdgeCaseBlockUtils;
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
 import io.github.bl3rune.blueprints.utils.LocationUtils;
 import io.github.bl3rune.blueprints.utils.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.VOID;
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.ROW_END;
@@ -35,12 +36,12 @@ public class CapturedBlueprintData extends BlueprintData {
 
         String world = loc1.getWorld().getName();
         if (!world.equals(loc2.getWorld().getName())) {
-            sendMessage(player,ChatColor.RED + "I didn't think I would have to say this...");
-            sendMessage(player,ChatColor.RED + "...");
-            sendMessage(player,ChatColor.RED + "But the two locations have to be in the same world...");
-            sendMessage(player,ChatColor.RED + "...");
-            sendMessage(player,ChatColor.RED + "...");
-            sendMessage(player,ChatColor.RED + "Take a break for a bit friend.");
+            sendMessage(player, Component.text("I didn't think I would have to say this...", NamedTextColor.RED));
+            sendMessage(player, Component.text("...", NamedTextColor.RED));
+            sendMessage(player, Component.text("But the two locations have to be in the same world...", NamedTextColor.RED));
+            sendMessage(player, Component.text("...", NamedTextColor.RED));
+            sendMessage(player, Component.text("...", NamedTextColor.RED));
+            sendMessage(player, Component.text("Take a break for a bit friend.", NamedTextColor.RED));
             return;
         }
 
@@ -55,7 +56,7 @@ public class CapturedBlueprintData extends BlueprintData {
         Integer maxSize = GlobalConfig.getMaxSize();
          if (player != null && maxSize != null && sizesExceedLimit(new int[] {xSize,ySize,zSize}, 1, maxSize)) {
              if (!player.hasPermission("blu3print.no-size-limit")) {
-                 sendMessage(player,ChatColor.RED + "You do not have permission to set size over the max size limit of " + maxSize + "!");
+                 sendMessage(player, Component.text("You do not have permission to set size over the max size limit of " + maxSize + "!", NamedTextColor.RED));
                  return;
              }
         }

@@ -1,6 +1,5 @@
 package io.github.bl3rune.blueprints.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +9,8 @@ import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.enums.Alignment;
 import io.github.bl3rune.blueprints.enums.GConfig;
 import io.github.bl3rune.blueprints.enums.SemanticLevel;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class GlobalConfigCommand implements CommandExecutor {
 
@@ -36,7 +37,7 @@ public class GlobalConfigCommand implements CommandExecutor {
                 for (GConfig cc : GConfig.values()) {
                     sb.append(cc.name()).append(" ");
                 }
-                sender.sendMessage(ChatColor.RED + "Not valid subcommand try : " + sb.toString());
+                sender.sendMessage(Component.text("Not valid subcommand try : " + sb.toString(), NamedTextColor.RED));
                 return true;
             }
         }

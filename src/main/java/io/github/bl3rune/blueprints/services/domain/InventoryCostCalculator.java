@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
@@ -14,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
 import io.github.bl3rune.blueprints.config.GlobalConfig;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * Inventory cost / discount calculator extracted from
@@ -34,7 +35,7 @@ public final class InventoryCostCalculator {
             Map<String, Integer> ingredientsCount, Map<String, Integer> blocksUnableToPlace) {
         if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("blu3print.no-block-cost")) {
             if (removeBlocks && GlobalConfig.isFreePlacementMessageEnabled()) {
-                player.sendMessage(ChatColor.GREEN + "Placing Blu3print for free!");
+                player.sendMessage(Component.text("Placing Blueprint for free!", NamedTextColor.GREEN));
             }
             return new HashMap<>();
         }
@@ -45,7 +46,7 @@ public final class InventoryCostCalculator {
         if (player.isSneaking()
                 && (player.hasPermission("blu3print.force-place-discount") || !forcePlacePenalty)) {
             if (GlobalConfig.isDiscountPlacementMessageEnabled() && forcePlacePenalty) {
-                player.sendMessage(ChatColor.GREEN + "Placing Blu3print for discount as blocks in the way!");
+                player.sendMessage(Component.text("Placing Blueprint for discount as blocks in the way!", NamedTextColor.GREEN));
             }
             blocksUnableToPlace.forEach((material, amount) -> {
                 Integer count = ingCountCopy.getOrDefault(material, 0);

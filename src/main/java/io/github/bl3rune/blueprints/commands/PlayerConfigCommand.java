@@ -1,7 +1,6 @@
 package io.github.bl3rune.blueprints.commands;
 
 import java.util.List;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,6 +10,8 @@ import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.config.PlayerConfig;
 import io.github.bl3rune.blueprints.enums.Config;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class PlayerConfigCommand implements CommandExecutor {
 
@@ -30,7 +31,7 @@ public class PlayerConfigCommand implements CommandExecutor {
                             sb.append(cc.name()).append(" ");
                         }
                     }
-                    player.sendMessage(ChatColor.RED + "Not valid subcommand try : " + sb.toString());
+                    player.sendMessage(Component.text("Not valid subcommand try : " + sb.toString(), NamedTextColor.RED));
                     return true;
                 }
             }
@@ -43,7 +44,7 @@ public class PlayerConfigCommand implements CommandExecutor {
             switch (config) {
                 case CLEAR:
                     Blueprints.setPlayerConfig(playerUUID, null);
-                    player.sendMessage(ChatColor.GREEN + "Player config reset!");
+                    player.sendMessage(Component.text("Player config reset!", NamedTextColor.GREEN));
                     return true;
                 case IGNORE_MATERIAL:
                 case ALLOW_MATERIAL:
@@ -62,29 +63,29 @@ public class PlayerConfigCommand implements CommandExecutor {
     private PlayerConfig modifyMaterialIgnoreList(PlayerConfig pc, String[] args, Config config,
             Player player) {
         if (args.length < 2) {
-            player.sendMessage("Usage: /blu3print.player-config IGNORE_MATERIALS [material]");
+            player.sendMessage("Usage: /blueprint.player-config IGNORE_MATERIALS [material]");
             return pc;
         }
         Material material; 
         try {
             material = Material.matchMaterial(args[1]);
             if (material == null) {
-                player.sendMessage(ChatColor.RED + "Invalid material : " + args[1]);
+                player.sendMessage(Component.text("Invalid material : " + args[1], NamedTextColor.RED));
                 return pc;
             }
         } catch (Exception e) {
-            player.sendMessage(ChatColor.RED + "Invalid material : " + args[1]);
+            player.sendMessage(Component.text("Invalid material : " + args[1], NamedTextColor.RED));
             return pc;
         }
         List<String> ignoredMaterials = pc.getIgnoredMaterials();
         if (config == Config.IGNORE_MATERIAL) {
             if (GlobalConfig.isVerboseLogging()) {
-                player.sendMessage(ChatColor.GREEN + "Added " + material.name() + " to ignore list");
+                player.sendMessage(Component.text("Added " + material.name() + " to ignore list", NamedTextColor.GREEN));
             }
             ignoredMaterials.add(material.name().toUpperCase());
         } else {
             if (GlobalConfig.isVerboseLogging()) {
-                player.sendMessage(ChatColor.RED + "Removed " + material.name() + " froom ignore list");
+                player.sendMessage(Component.text("Removed " + material.name() + " froom ignore list", NamedTextColor.RED));
             }
             ignoredMaterials.removeIf(m -> m.equalsIgnoreCase(material.name()));
         }

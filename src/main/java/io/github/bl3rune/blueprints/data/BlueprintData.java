@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +23,9 @@ import io.github.bl3rune.blueprints.services.domain.MaterialIgnoreResolver;
 import io.github.bl3rune.blueprints.services.domain.PlacementPlanner;
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
 import io.github.bl3rune.blueprints.utils.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 /**
  * Domain entity for a captured/imported blueprint. After Phase 4 of the
@@ -66,36 +68,44 @@ public abstract class BlueprintData {
         return encoded;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(ChatColor.WHITE).append("Ingredients:").append("\n").append(ChatColor.GRAY);
-        ingredientsCount.forEach((k, v) -> sb.append(" - ")
+    public Component describe() {
+        StringBuilder ingredients = new StringBuilder();
+        ingredientsCount.forEach((k, v) -> ingredients.append(" - ")
                 .append(k.replace("_", " "))
                 .append(": ")
                 .append(v * position.getScalingIngredientsMultiplier()).append("\n"));
 
-        sb.append(ChatColor.WHITE).append("Position:").append("\n").append(ChatColor.GRAY);
-        sb.append(" - X:Y:Z Sizes: ").append(position.getXSize() * position.getScale()).append(" : ");
-        sb.append(position.getYSize() * position.getScale()).append(" : ");
-        sb.append(position.getZSize() * position.getScale()).append("\n");
-        sb.append(" - Orientation: ").append(position.getOrientation().name()).append("\n");
-        sb.append(" - Rotation: ").append(position.getRotation().name()).append("\n");
-        sb.append(" - Scale: ").append(position.getScale()).append("\n");
-        return sb.toString();
+        StringBuilder positionDetails = new StringBuilder();
+        positionDetails.append(" - X:Y:Z Sizes: ").append(position.getXSize() * position.getScale()).append(" : ");
+        positionDetails.append(position.getYSize() * position.getScale()).append(" : ");
+        positionDetails.append(position.getZSize() * position.getScale()).append("\n");
+        positionDetails.append(" - Orientation: ").append(position.getOrientation().name()).append("\n");
+        positionDetails.append(" - Rotation: ").append(position.getRotation().name()).append("\n");
+        positionDetails.append(" - Scale: ").append(position.getScale()).append("\n");
+
+        return Component.text()
+                .append(Component.text("Ingredients:\n", NamedTextColor.WHITE))
+                .append(Component.text(ingredients.toString(), NamedTextColor.GRAY))
+                .append(Component.text("Position:\n", NamedTextColor.WHITE))
+                .append(Component.text(positionDetails.toString(), NamedTextColor.GRAY))
+                .build();
+    }
+
+    @Override
+    public String toString() {
+        return PlainTextComponentSerializer.plainText().serialize(describe());
     }
 
     // PLACING BLU3PRINT SECTION
 
-    public void placeBlocks(Player player, Location location, boolean forced, boolean onTop, String blu3printUUID) {
+    public void placeBlocks(Player player, Location location, boolean forced, boolean onTop, String blueprintUUID) {
         ServiceRegistry registry = registry();
         LimitValidator limits = registry.get(LimitValidator.class);
         if (!limits.playerAllowedToUse(player, position)) {
             return;
         }
         MaterialIgnoreResolver ignoreResolver = registry.get(MaterialIgnoreResolver.class);
-        materialIgnoreList = ignoreResolver.resolvePlayerIgnoreList(player, blu3printUUID);
+        materialIgnoreList = ignoreResolver.resolvePlayerIgnoreList(player, blueprintUUID);
 
         Function<Location, Location> calculateFinalLocation = buildCalculateFinalLocationFunction(player, location,
                 onTop);
@@ -105,19 +115,22 @@ public abstract class BlueprintData {
         Map<String, Integer> missingBlocks = costs.checkPlayerHasBlocks(player, false, ingredientsCount,
                 blocksUnableToPlace);
         if (!missingBlocks.isEmpty()) {
-            sendMessage(player, ChatColor.RED + "Missing these blocks to place the blu3print:");
+            sendMessage(player, Component.text("Missing these blocks to place the blueprint:", NamedTextColor.RED));
             missingBlocks
-                    .forEach((k, v) -> sendMessage(player, ChatColor.RED + " - " + k.replace("_", " ") + " : " + v));
+                    .forEach((k, v) -> sendMessage(player,
+                            Component.text(" - " + k.replace("_", " ") + " : " + v, NamedTextColor.RED)));
             return;
         }
 
         if (!blocksUnableToPlace.isEmpty()) {
             if (forced && GlobalConfig.isForcePlacementMessageEnabled()) {
-                sendMessage(player, ChatColor.AQUA + "Forcing placing blu3print despite blocks in the way.");
+                sendMessage(player, Component.text("Forcing placing blueprint despite blocks in the way.",
+                        NamedTextColor.AQUA));
             } else if (!forced) {
-                sendMessage(player, ChatColor.RED + "You can't place the blu3print here. There are blocks in the way.");
-                sendMessage(player,
-                        ChatColor.RED + "To force placement of the blu3print, sneak while using the blu3print.");
+                sendMessage(player, Component.text(
+                        "You can't place the blueprint here. There are blocks in the way.", NamedTextColor.RED));
+                sendMessage(player, Component.text(
+                        "To force placement of the blueprint, sneak while using the blueprint.", NamedTextColor.RED));
                 return;
             }
         }
@@ -224,22 +237,22 @@ public abstract class BlueprintData {
         String newHeader = EncodingUtils
                 .buildHeaderWithPerspective(EncodingUtils.ingredientsMapToString(ingredientsMap), newPosition);
         String newEncoding = EncodingUtils.buildEncodedString(newHeader, bodyString);
-        sendMessage(null, "Updated blu3print: " + newEncoding);
+        sendMessage(null, Component.text("Updated blueprint: " + newEncoding));
         return newEncoding;
     }
 
     // UTILITY METHODS
 
-    protected void sendMessage(Player player, String message) {
+    protected void sendMessage(Player player, Component message) {
         if (player == null) {
-            Blueprints.logger().info(message);
+            Blueprints.logger().info(PlainTextComponentSerializer.plainText().serialize(message));
         } else {
             player.sendMessage(message);
         }
     }
 
-    protected List<String> buildMaterialIgnoreList(Player player, String blu3printUUID) {
-        return registry().get(MaterialIgnoreResolver.class).resolvePlayerIgnoreList(player, blu3printUUID);
+    protected List<String> buildMaterialIgnoreList(Player player, String blueprintUUID) {
+        return registry().get(MaterialIgnoreResolver.class).resolvePlayerIgnoreList(player, blueprintUUID);
     }
 
     protected boolean isIgnorable(Material material) {

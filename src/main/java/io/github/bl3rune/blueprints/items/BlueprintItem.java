@@ -6,24 +6,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class BlueprintItem extends ItemStack {
 
     public static final Material LOCKED_MATERIAL = Material.WRITTEN_BOOK;
     public static final Material UNLOCKED_MATERIAL = Material.WRITABLE_BOOK;
-    public static final String BLU3PRINT_PREFIX = ChatColor.BLUE + "Blu3print";
+    public static final String BLU3PRINT_PREFIX = LegacyComponentSerializer.legacySection()
+            .serialize(Component.text("Blueprint", NamedTextColor.BLUE));
+    private static final String LEGACY_PREFIX = LegacyComponentSerializer.legacySection()
+            .serialize(Component.text("Blu3print", NamedTextColor.BLUE));
+
+    private static boolean displayNameMatchesPrefix(String displayName) {
+        return displayName != null
+                && (displayName.startsWith(BLU3PRINT_PREFIX) || displayName.startsWith(LEGACY_PREFIX));
+    }
 
     public static BlueprintItem getBlankBlu3print() {
         BlueprintItem blu3print = new BlueprintItem(UNLOCKED_MATERIAL);
         ItemMeta meta = blu3print.getItemMeta();
         meta.setDisplayName(BLU3PRINT_PREFIX + " Writer");
-        meta.setLore(Arrays.asList("Used for composing Blu3prints"));
+        meta.setLore(Arrays.asList("Used for composing Blueprints"));
         blu3print.setItemMeta(meta);
         return blu3print;
     }
@@ -32,7 +42,7 @@ public class BlueprintItem extends ItemStack {
         List<String> lore = Arrays.asList(author, uuid);
         BlueprintItem blu3print = new BlueprintItem(LOCKED_MATERIAL);
         ItemMeta meta = blu3print.getItemMeta();
-        name = name.startsWith(BLU3PRINT_PREFIX) ? EncodingUtils.modifierSplit(name)[1].trim() : name;
+        name = displayNameMatchesPrefix(name) ? EncodingUtils.modifierSplit(name)[1].trim() : name;
         meta.setDisplayName(BLU3PRINT_PREFIX + " : " + name);
         meta.setLore(lore);
         blu3print.setItemMeta(meta);
@@ -42,19 +52,19 @@ public class BlueprintItem extends ItemStack {
     public static String extractCacheKeyFromBlu3print(ItemStack blu3print)  {
         ItemMeta meta = blu3print.getItemMeta();
         if (meta == null) {
-            logger().warning("Blu3print item has no meta");
+            logger().warning("Blueprint item has no meta");
             return null;
         }
         List<String> lore = meta.getLore();
         if (lore == null || lore.size() < 2) {
-            logger().warning("Blu3print item has invalid lore");
+            logger().warning("Blueprint item has invalid lore");
             return null;
         }
         String key = lore.get(1);
         try {
             UUID.fromString(key);
         } catch (IllegalArgumentException e) {
-            logger().warning("Blu3print item has invalid uuid: " + key);
+            logger().warning("Blueprint item has invalid uuid: " + key);
             return null;
         }
         return key;
@@ -72,13 +82,13 @@ public class BlueprintItem extends ItemStack {
     public static boolean isBlu3print(ItemStack item, Boolean blank) {
         if (blank == null) {
             return item != null && (item.getType().equals(UNLOCKED_MATERIAL) || item.getType().equals(LOCKED_MATERIAL))
-                    && item.hasItemMeta() && item.getItemMeta().getDisplayName().startsWith(BLU3PRINT_PREFIX);
+                    && item.hasItemMeta() && displayNameMatchesPrefix(item.getItemMeta().getDisplayName());
         } else if (blank.booleanValue()) {
             return item != null && item.getType().equals(UNLOCKED_MATERIAL) && item.hasItemMeta()
-                    && item.getItemMeta().getDisplayName().startsWith(BLU3PRINT_PREFIX);
+                    && displayNameMatchesPrefix(item.getItemMeta().getDisplayName());
         } else {
             return item != null && item.getType().equals(LOCKED_MATERIAL) && item.hasItemMeta()
-                    && item.getItemMeta().getDisplayName().startsWith(BLU3PRINT_PREFIX);
+                    && displayNameMatchesPrefix(item.getItemMeta().getDisplayName());
         }
     }
 

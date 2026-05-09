@@ -17,12 +17,12 @@ public class NameCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length < 1) {
-                sender.sendMessage("You must provide a name for the blu3print");
+                sender.sendMessage("You must provide a name for the blueprint");
                 return false;
             }
             ItemStack blu3print = InventoryUtils.getHeldBlu3print(player, false);
             if (blu3print == null) {
-                sender.sendMessage("You must be holding a blu3print to name/rename it.");
+                sender.sendMessage("You must be holding a blueprint to name/rename it.");
                 return false;
             }
             StringBuilder sb = new StringBuilder();
@@ -35,7 +35,7 @@ public class NameCommand implements CommandExecutor {
             itemMeta.setDisplayName(sb.toString());
             blu3print.setItemMeta(itemMeta);
             player.getInventory().setItemInMainHand(blu3print);
-            player.sendMessage( "Blu3print name changed to: " + sb.toString());
+            player.sendMessage( "Blueprint name changed to: " + sb.toString());
         }
         return true;
     }

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import io.github.bl3rune.blueprints.utils.EdgeCaseBlockUtils;
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
+import net.kyori.adventure.text.Component;
 
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.ROW_END;
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.COLUMN_END;
@@ -23,13 +24,13 @@ public class ImportedBlueprintData extends BlueprintData {
         String header = EncodingUtils.getHeaderFromEncoding(encodedString);
         this.ingredientsMap = EncodingUtils.getIngredientsMapFromHeader(header);
         if (this.ingredientsMap.isEmpty()) {
-            sendMessage(player,"Invalid Blu3print data provided! @ingredients");
+            sendMessage(player, Component.text("Invalid Blueprint data provided! @ingredients"));
             return;
         }
         
         int [] sizes = EncodingUtils.getSizesFromHeader(header);
         if (sizes.length < 3) {
-            sendMessage(player,"Invalid Blu3print data provided! @sizes");
+            sendMessage(player, Component.text("Invalid Blueprint data provided! @sizes"));
             return;
         }
         this.ingredientsCount = new HashMap<>();

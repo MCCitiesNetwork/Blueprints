@@ -2,7 +2,6 @@ package io.github.bl3rune.blueprints.listeners;
 
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -24,6 +23,8 @@ import io.github.bl3rune.blueprints.enums.CommandType;
 import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.items.Hologram;
 import io.github.bl3rune.blueprints.services.InteractionCooldownService;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import static io.github.bl3rune.blueprints.utils.LocationUtils.locationStringFormat;
 
@@ -59,7 +60,7 @@ public class PlayerInteractListener implements Listener {
         if (cooldowns().isOnCooldown(playerKey, cooldown, currentTime)) {
             event.setCancelled(true);
             if (GlobalConfig.isCooldownMessageEnabled() && player != null) {
-                player.sendMessage(ChatColor.RED + "Cooldown Triggered");
+                player.sendMessage(Component.text("Cooldown Triggered", NamedTextColor.RED));
             }
             return;
         }
@@ -118,15 +119,15 @@ public class PlayerInteractListener implements Listener {
         if (player.isSneaking()) {
             boolean added = cooldowns().toggleIgnore(playerUUID, locationString);
             if (added) {
-                player.sendMessage(ChatColor.GREEN + "Adding block to ignore list");
+                player.sendMessage(Component.text("Adding block to ignore list", NamedTextColor.GREEN));
             } else {
-                player.sendMessage(ChatColor.RED + "Block already ignored, removing from ignore list");
+                player.sendMessage(Component.text("Block already ignored, removing from ignore list", NamedTextColor.RED));
             }
             return;
         }
         player.sendMessage("First block selected " + locationString);
         if (cooldowns().hasIgnoreEntries(playerUUID)) {
-            player.sendMessage(ChatColor.GRAY + "Cleared block ignore list");
+            player.sendMessage(Component.text("Cleared block ignore list", NamedTextColor.GRAY));
             cooldowns().clearIgnoreList(playerUUID);
         }
         item = persistDataKey(item, "location1-" + playerUUID, locationString);
@@ -137,10 +138,10 @@ public class PlayerInteractListener implements Listener {
         if (player.isSneaking()) {
             List<String> ignoreList = cooldowns().getIgnoreList(playerUUID);
             if (ignoreList.isEmpty()) {
-                player.sendMessage(ChatColor.RED + "No blocks on ignore list");
+                player.sendMessage(Component.text("No blocks on ignore list", NamedTextColor.RED));
             } else {
                 player.sendMessage("Blocks on ignore list");
-                ignoreList.forEach(i -> player.sendMessage(ChatColor.GRAY + " - " + i));
+                ignoreList.forEach(i -> player.sendMessage(Component.text(" - " + i, NamedTextColor.GRAY)));
             }
             player.closeInventory();
             return;
@@ -149,7 +150,7 @@ public class PlayerInteractListener implements Listener {
         Location location = block.getLocation();
         player.sendMessage("Second block selected " + locationStringFormat(location));
         if (cooldowns().hasIgnoreEntries(playerUUID)) {
-            player.sendMessage(ChatColor.GRAY + "Cleared block ignore list");
+            player.sendMessage(Component.text("Cleared block ignore list", NamedTextColor.GRAY));
             cooldowns().clearIgnoreList(playerUUID);
         }
         item = persistDataKey(item, "location2-" + player.getUniqueId().toString(), locationStringFormat(location));
@@ -159,13 +160,13 @@ public class PlayerInteractListener implements Listener {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
         if (lore.size() < 2) {
-            player.sendMessage(ChatColor.RED + "Blu3print missing ID");
+            player.sendMessage(Component.text("Blueprint missing ID", NamedTextColor.RED));
             return;
         }
         String blu3printUUID = lore.get(1);
         BlueprintData blu3printItem = instance.getBlueprintFromCache(blu3printUUID);
         if (blu3printItem == null) {
-            player.sendMessage(ChatColor.RED + "Blu3print ID missing from cache");
+            player.sendMessage(Component.text("Blueprint ID missing from cache", NamedTextColor.RED));
             return;
         }
 
@@ -178,19 +179,19 @@ public class PlayerInteractListener implements Listener {
         List<String> lore = meta.getLore();
 
         if (lore.size() < 2) {
-            player.sendMessage(ChatColor.RED + "Blu3print missing ID");
+            player.sendMessage(Component.text("Blueprint missing ID", NamedTextColor.RED));
             return;
         }
         String blu3printUuid = lore.get(1);
         BlueprintData blu3printData = instance.getBlueprintFromCache(blu3printUuid);
 
         if (blu3printData == null) {
-            player.sendMessage(ChatColor.RED + "Blu3print ID missing from cache");
+            player.sendMessage(Component.text("Blueprint ID missing from cache", NamedTextColor.RED));
             return;
         }
 
         if (!player.hasPermission("blu3print.holograms")) {
-            player.sendMessage(ChatColor.RED + "You do not have permission to place hologram previews!");
+            player.sendMessage(Component.text("You do not have permission to place hologram previews!", NamedTextColor.RED));
             return;
         }
 
@@ -203,16 +204,16 @@ public class PlayerInteractListener implements Listener {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
         if (lore.size() < 2) {
-            player.sendMessage(ChatColor.RED + "Blu3print missing ID");
+            player.sendMessage(Component.text("Blueprint missing ID", NamedTextColor.RED));
             return;
         }
         BlueprintData blu3printItem = instance.getBlueprintFromCache(lore.get(1));
         if (blu3printItem == null) {
-            player.sendMessage(ChatColor.RED + "Blu3print ID missing from cache");
+            player.sendMessage(Component.text("Blueprint ID missing from cache", NamedTextColor.RED));
             return;
         }
         player.sendMessage(meta.getDisplayName());
-        player.sendMessage(blu3printItem.toString());
+        player.sendMessage(blu3printItem.describe());
     }
 
     private ItemStack persistDataKey(ItemStack item, String key, String message) {

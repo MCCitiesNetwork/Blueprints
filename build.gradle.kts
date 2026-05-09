@@ -18,14 +18,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.12.0")
     annotationProcessor(group = "org.spigotmc", name = "plugin-annotations", version = "1.3-SNAPSHOT")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.yaml:snakeyaml:2.2")
-    testImplementation("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
 }
 
 tasks.test {
@@ -36,7 +36,7 @@ tasks.test {
     }
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion = 21
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

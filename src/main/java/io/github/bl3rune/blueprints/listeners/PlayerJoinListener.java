@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
+import net.kyori.adventure.text.Component;
 
 public class PlayerJoinListener implements Listener {
 
@@ -22,7 +23,7 @@ public class PlayerJoinListener implements Listener {
         if (!GlobalConfig.isUpdateAvailableMessageEnabled()) {
             return;
         }
-        List<String> updates = Blueprints.getUpdateMessages();
+        List<Component> updates = Blueprints.getUpdateMessages();
         if (player.hasPermission("blu3print.update-available-message") && !updates.isEmpty()) {
             updates.forEach(um -> player.sendMessage(um));
         }

@@ -3,7 +3,6 @@ package io.github.bl3rune.blueprints.services.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -11,6 +10,8 @@ import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.config.PlayerConfig;
 import io.github.bl3rune.blueprints.services.PlayerSessionService;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * Single source of truth for the ignore-material logic that was previously
@@ -39,7 +40,7 @@ public final class MaterialIgnoreResolver {
             if (pbc.uuidMatches(blu3printUUID)) {
                 ignoreList.addAll(pbc.getIgnoredMaterials());
             } else {
-                player.sendMessage(ChatColor.RED + "Cleared blu3print config as using different blu3print!");
+                player.sendMessage(Component.text("Cleared blueprint config as using different blueprint!", NamedTextColor.RED));
                 sessions.setPlayerBlueprintConfig(playerUUID, null);
             }
         }

@@ -15,6 +15,7 @@ import io.github.bl3rune.blueprints.core.ServiceRegistry;
 import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.services.BlueprintCacheService;
 import io.github.bl3rune.blueprints.services.PlayerSessionService;
+import net.kyori.adventure.text.Component;
 
 /**
  * Main plugin class. After Phase 3 of the architecture overhaul this class
@@ -28,7 +29,7 @@ import io.github.bl3rune.blueprints.services.PlayerSessionService;
 public final class Blueprints extends JavaPlugin {
 
     private static Blueprints instance;
-    private static final List<String> updateMessages = new ArrayList<>();
+    private static final List<Component> updateMessages = new ArrayList<>();
 
     private PluginBootstrap bootstrap;
 
@@ -36,7 +37,7 @@ public final class Blueprints extends JavaPlugin {
         return instance;
     }
 
-    public static List<String> getUpdateMessages() {
+    public static List<Component> getUpdateMessages() {
         return updateMessages;
     }
 

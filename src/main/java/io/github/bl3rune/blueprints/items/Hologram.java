@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -20,6 +19,8 @@ import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.data.ManipulatablePosition;
 import io.github.bl3rune.blueprints.data.MaterialData;
 import io.github.bl3rune.blueprints.services.domain.MaterialIgnoreResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Hologram {
 
@@ -46,7 +47,7 @@ public class Hologram {
             if (!config.uuidMatches(blu3printUuid)) {
                 config = null;
                 Blueprints.setPlayerBlueprintConfig(playerUUID, null);
-                player.sendMessage(ChatColor.RED + "Cleared blu3print config as using different blu3print!");
+                player.sendMessage(Component.text("Cleared blueprint config as using different blueprint!", NamedTextColor.RED));
             } else {
                 materialIgnoreList.addAll(config.getIgnoredMaterials());
             }

@@ -36,7 +36,7 @@ public final class RecipeRegistrar {
             }
             Bukkit.addRecipe(recipe);
         } catch (Exception e) {
-            plugin.getLogger().warning("Invalid blu3print recipe. using default recipe");
+            plugin.getLogger().warning("Invalid blueprint recipe. using default recipe");
             ShapelessRecipe fallback = new ShapelessRecipe(
                     new NamespacedKey(plugin, "Blu3print_Writer"),
                     BlueprintItem.getBlankBlu3print());

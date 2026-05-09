@@ -18,7 +18,7 @@ public class TurnCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             ItemStack item = CommandSupport.requireHeldBlueprint(sender, player,
-                    "You must be holding a blu3print to turn what side faces you");
+                    "You must be holding a blueprint to turn what side faces you");
             if (item == null) {
                 return true;
             }

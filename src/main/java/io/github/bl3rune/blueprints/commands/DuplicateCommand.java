@@ -16,10 +16,10 @@ public class DuplicateCommand implements CommandExecutor {
             Player player = (Player) sender;
             ItemStack blu3print = InventoryUtils.getHeldBlu3print(player, false);
             if (blu3print == null) {
-                sender.sendMessage("You must be holding a blu3print to duplicate it.");
+                sender.sendMessage("You must be holding a blueprint to duplicate it.");
                 return true;
             }
-            sender.sendMessage("Duplicating blu3print...");
+            sender.sendMessage("Duplicating blueprint...");
             blu3print.setAmount(blu3print.getAmount() + 1);
             player.getInventory().setItemInMainHand(blu3print);
         }

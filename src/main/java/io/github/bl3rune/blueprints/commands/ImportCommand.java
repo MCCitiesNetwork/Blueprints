@@ -33,7 +33,7 @@ public class ImportCommand implements CommandExecutor {
             Player player = (Player) sender;
             Inventory inventory = player.getInventory();
             if (args.length < 2) {
-                sender.sendMessage("You must provide a name and a blu3print string to import.");
+                sender.sendMessage("You must provide a name and a blueprint string to import.");
                 return false;
             }
             if (args.length > 2) {
@@ -42,7 +42,7 @@ public class ImportCommand implements CommandExecutor {
             }
             ItemStack blankBlu3print = InventoryUtils.getHeldBlu3print(player, true);
             if (blankBlu3print == null) {
-                sender.sendMessage("You must be holding a blank blu3print to import a blu3print.");
+                sender.sendMessage("You must be holding a blank blueprint to import a blueprint.");
                 return false;
             }
             String uuid = instance.getKeyFromEncoding(args[1]);
@@ -55,7 +55,7 @@ public class ImportCommand implements CommandExecutor {
             instance.saveOrUpdateCachedBlu3print(uuid, blu3printData);
 
             inventory.addItem(blu3print);
-            sender.sendMessage("Importing blu3print...");
+            sender.sendMessage("Importing blueprint...");
         } else {
             sender.sendMessage("You must be a player to use this command.");
         }

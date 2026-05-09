@@ -46,18 +46,18 @@ public final class JsonBlueprintRepository implements BlueprintRepository {
             try (FileReader reader = new FileReader(file)) {
                 Map<String, String> entries = gson.fromJson(reader, Map.class);
                 if (entries == null || entries.isEmpty()) {
-                    logger.warning("No saved blu3prints found in blu3prints.json");
+                    logger.warning("No saved blueprints found in " + file.getName());
                     return new ArrayList<>();
                 }
                 List<BlueprintRecord> records = new ArrayList<>(entries.size());
                 for (Map.Entry<String, String> e : entries.entrySet()) {
                     records.add(new BlueprintRecord(e.getKey(), e.getValue()));
                 }
-                logger.warning("Loaded Cached blu3prints from blu3prints.json");
+                logger.warning("Loaded Cached blueprints from " + file.getName());
                 return records;
             }
         } catch (Exception e) {
-            logger.severe("Failed to load blu3prints to cache : " + e.getMessage());
+            logger.severe("Failed to load blueprints to cache : " + e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -77,9 +77,9 @@ public final class JsonBlueprintRepository implements BlueprintRepository {
                 gson.toJson(payload, writer);
                 writer.flush();
             }
-            logger.warning("Cached blu3prints saved to blu3prints.json");
+            logger.warning("Cached blueprints saved to " + CURRENT_FILE);
         } catch (Exception e) {
-            logger.severe("Failed to save cached blu3prints : " + e.getMessage());
+            logger.severe("Failed to save cached blueprints : " + e.getMessage());
             e.printStackTrace();
         }
     }

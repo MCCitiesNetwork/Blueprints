@@ -16,7 +16,7 @@ public class ScaleCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             ItemStack item = CommandSupport.requireHeldBlueprint(sender, player,
-                    "You must be holding a blu3print to change its scale");
+                    "You must be holding a blueprint to change its scale");
             if (item == null) {
                 return true;
             }

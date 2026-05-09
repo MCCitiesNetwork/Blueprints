@@ -2,7 +2,6 @@ package io.github.bl3rune.blueprints.commands;
 
 import java.util.Arrays;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,19 +11,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.enums.MenuItems;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class BlueprintCommand implements CommandExecutor {
 
     private Inventory inventory;
 
-    public static final String BLU3PRINT_MENU_STRING = ChatColor.BLUE + "Blu3print Menu";
+    public static final Component BLU3PRINT_MENU_TITLE = Component.text("Blueprint Menu", NamedTextColor.BLUE);
+    public static final String BLU3PRINT_MENU_STRING = LegacyComponentSerializer.legacySection().serialize(BLU3PRINT_MENU_TITLE);
      
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if  (inventory == null) {
-                inventory = Bukkit.createInventory(player, 18, BLU3PRINT_MENU_STRING);
+                inventory = Bukkit.createInventory(player, 18, BLU3PRINT_MENU_TITLE);
 
                 int index = 0;
                 for (MenuItems item : MenuItems.values()) {

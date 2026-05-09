@@ -1,10 +1,11 @@
 package io.github.bl3rune.blueprints.services.domain;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.data.ManipulatablePosition;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * Validates per-player size/scale permissions and limits previously inlined
@@ -20,8 +21,9 @@ public final class LimitValidator {
         Integer maxSize = GlobalConfig.getMaxSize();
         if (player != null && maxSize != null && sizesExceedLimit(sizes, 1, maxSize)) {
             if (!player.hasPermission("blu3print.no-size-limit")) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to set size over the max size limit of " + maxSize + "!");
+                player.sendMessage(Component.text(
+                        "You do not have permission to set size over the max size limit of " + maxSize + "!",
+                        NamedTextColor.RED));
                 return false;
             }
         }
@@ -29,9 +31,9 @@ public final class LimitValidator {
         Integer maxScale = GlobalConfig.getMaxScale();
         if (player != null && maxScale != null && scale > maxScale) {
             if (!player.hasPermission("blu3print.no-scale-limit")) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to increase scale over the max scale limit of " + maxScale
-                        + "!");
+                player.sendMessage(Component.text(
+                        "You do not have permission to increase scale over the max scale limit of " + maxScale + "!",
+                        NamedTextColor.RED));
                 return false;
             }
         }
@@ -40,9 +42,10 @@ public final class LimitValidator {
         if (player != null && maxOverallSize != null && sizesExceedLimit(sizes, scale, maxOverallSize)) {
             if (!player.hasPermission("blu3print.no-scale-limit")
                     && !player.hasPermission("blu3print.no-size-limit")) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to increase size over the max overall size limit of "
-                        + maxOverallSize + "!");
+                player.sendMessage(Component.text(
+                        "You do not have permission to increase size over the max overall size limit of "
+                                + maxOverallSize + "!",
+                        NamedTextColor.RED));
                 return false;
             }
         }
@@ -54,9 +57,9 @@ public final class LimitValidator {
         Integer maxScale = GlobalConfig.getMaxScale();
         if (player != null && maxScale != null && newScale > maxScale) {
             if (!player.hasPermission("blu3print.no-scale-limit")) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to increase scale over the max scale limit of " + maxScale
-                        + "!");
+                player.sendMessage(Component.text(
+                        "You do not have permission to increase scale over the max scale limit of " + maxScale + "!",
+                        NamedTextColor.RED));
                 return false;
             }
         }
@@ -68,9 +71,10 @@ public final class LimitValidator {
                         || (position.getZSize() * newScale) > maxOverallSize)) {
             if (!player.hasPermission("blu3print.no-scale-limit")
                     && !player.hasPermission("blu3print.no-size-limit")) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to increase size over the max overall size limit of "
-                        + maxOverallSize + "!");
+                player.sendMessage(Component.text(
+                        "You do not have permission to increase size over the max overall size limit of "
+                                + maxOverallSize + "!",
+                        NamedTextColor.RED));
                 return false;
             }
         }

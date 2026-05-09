@@ -25,6 +25,7 @@ import io.github.bl3rune.blueprints.commands.ScaleCommand;
 import io.github.bl3rune.blueprints.commands.ScaleTabCompleter;
 import io.github.bl3rune.blueprints.commands.TurnCommand;
 import io.github.bl3rune.blueprints.commands.TurnTabCompleter;
+import io.github.bl3rune.blueprints.config.ConfigService;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.enums.CommandType;
 import io.github.bl3rune.blueprints.listeners.BookListener;
@@ -75,6 +76,9 @@ public final class PluginBootstrap {
 
         plugin.getConfig().options().copyDefaults();
         plugin.saveDefaultConfig();
+
+        ConfigService configService = new ConfigService(plugin.getLogger());
+        registry.register(ConfigService.class, configService);
         GlobalConfig.refreshConfiguration();
 
         RecipeRegistrar recipeRegistrar = new RecipeRegistrar();

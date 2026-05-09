@@ -10,10 +10,10 @@ import io.github.bl3rune.blueprints.items.Blu3printItem;
 
 public class GiveCommand implements CommandExecutor {
 
-    private Blueprints instance;
+    private final Blueprints instance;
 
-    public GiveCommand () {
-        this.instance = Blueprints.getInstance();
+    public GiveCommand(Blueprints instance) {
+        this.instance = instance;
     }
 
     @Override

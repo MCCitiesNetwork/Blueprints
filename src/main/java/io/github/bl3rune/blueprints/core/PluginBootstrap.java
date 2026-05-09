@@ -3,6 +3,28 @@ package io.github.bl3rune.blueprints.core;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import io.github.bl3rune.blueprints.Blueprints;
+import io.github.bl3rune.blueprints.commands.Blu3printCommand;
+import io.github.bl3rune.blueprints.commands.ConfigCommand;
+import io.github.bl3rune.blueprints.commands.ConfigTabCompleter;
+import io.github.bl3rune.blueprints.commands.DuplicateCommand;
+import io.github.bl3rune.blueprints.commands.ExportCommand;
+import io.github.bl3rune.blueprints.commands.FaceCommand;
+import io.github.bl3rune.blueprints.commands.FaceTabCompleter;
+import io.github.bl3rune.blueprints.commands.GiveCommand;
+import io.github.bl3rune.blueprints.commands.GiveTabCompleter;
+import io.github.bl3rune.blueprints.commands.GlobalConfigCommand;
+import io.github.bl3rune.blueprints.commands.GlobalConfigTabCompleter;
+import io.github.bl3rune.blueprints.commands.HelpCommand;
+import io.github.bl3rune.blueprints.commands.ImportCommand;
+import io.github.bl3rune.blueprints.commands.NameCommand;
+import io.github.bl3rune.blueprints.commands.PlayerConfigCommand;
+import io.github.bl3rune.blueprints.commands.PlayerConfigTabCompleter;
+import io.github.bl3rune.blueprints.commands.RotateCommand;
+import io.github.bl3rune.blueprints.commands.RotateTabCompleter;
+import io.github.bl3rune.blueprints.commands.ScaleCommand;
+import io.github.bl3rune.blueprints.commands.ScaleTabCompleter;
+import io.github.bl3rune.blueprints.commands.TurnCommand;
+import io.github.bl3rune.blueprints.commands.TurnTabCompleter;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.enums.CommandType;
 import io.github.bl3rune.blueprints.listeners.BookListener;
@@ -77,8 +99,11 @@ public final class PluginBootstrap {
         registry.register(InventoryCostCalculator.class, new InventoryCostCalculator(plugin.getLogger()));
         registry.register(BlockApplicationStrategy.class, new BlockApplicationStrategy(plugin.getLogger()));
 
+        CommandRegistry commandRegistry = buildCommandRegistry();
+        registry.register(CommandRegistry.class, commandRegistry);
+
         registerListeners();
-        registerCommands();
+        registerCommands(commandRegistry);
         scheduleUpdateChecker();
     }
 
@@ -92,17 +117,38 @@ public final class PluginBootstrap {
     }
 
     private void registerListeners() {
-        plugin.getServer().getPluginManager().registerEvents(new PlayerInteractListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PlayerInteractListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new MenuInteractListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new BookListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BookListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), plugin);
     }
 
-    private void registerCommands() {
+    private CommandRegistry buildCommandRegistry() {
+        CommandRegistry r = new CommandRegistry();
+        r.register(CommandType.BLU3PRINT, new Blu3printCommand());
+        r.register(CommandType.DUPLICATE, new DuplicateCommand());
+        r.register(CommandType.FACE, new FaceCommand(), new FaceTabCompleter());
+        r.register(CommandType.ROTATE, new RotateCommand(), new RotateTabCompleter());
+        r.register(CommandType.TURN, new TurnCommand(), new TurnTabCompleter());
+        r.register(CommandType.IMPORT, new ImportCommand(plugin));
+        r.register(CommandType.EXPORT, new ExportCommand());
+        r.register(CommandType.SCALE, new ScaleCommand(), new ScaleTabCompleter());
+        r.register(CommandType.NAME, new NameCommand());
+        r.register(CommandType.GIVE, new GiveCommand(plugin), new GiveTabCompleter());
+        r.register(CommandType.HELP, new HelpCommand());
+        r.register(CommandType.CONFIG, new ConfigCommand(), new ConfigTabCompleter());
+        r.register(CommandType.PLAYER, new PlayerConfigCommand(), new PlayerConfigTabCompleter());
+        r.register(CommandType.GLOBAL, new GlobalConfigCommand(), new GlobalConfigTabCompleter());
+        return r;
+    }
+
+    private void registerCommands(CommandRegistry commandRegistry) {
         for (CommandType commandType : CommandType.values()) {
-            plugin.getCommand(commandType.getFullCommandName()).setExecutor(commandType.getCommandExecutor());
-            if (commandType.getTabCompleter() != null) {
-                plugin.getCommand(commandType.getFullCommandName()).setTabCompleter(commandType.getTabCompleter());
+            plugin.getCommand(commandType.getFullCommandName())
+                    .setExecutor(commandRegistry.getExecutor(commandType));
+            if (commandType.hasTabCompleter()) {
+                plugin.getCommand(commandType.getFullCommandName())
+                        .setTabCompleter(commandRegistry.getTabCompleter(commandType));
             }
         }
     }

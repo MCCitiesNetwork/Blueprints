@@ -20,10 +20,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class ImportCommand implements CommandExecutor {
 
-    private Blueprints instance;
+    private final Blueprints instance;
 
-    public ImportCommand () {
-        instance = Blueprints.getInstance();
+    public ImportCommand(Blueprints instance) {
+        this.instance = instance;
     }
 
     @Override

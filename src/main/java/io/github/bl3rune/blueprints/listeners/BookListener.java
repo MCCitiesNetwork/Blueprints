@@ -24,10 +24,10 @@ import io.github.bl3rune.blueprints.utils.InventoryUtils;
 
 public class BookListener implements Listener {
 
-    private Blueprints instance;
+    private final Blueprints instance;
 
-    public BookListener () {
-        this.instance = Blueprints.getInstance();
+    public BookListener(Blueprints instance) {
+        this.instance = instance;
     }
 
     @EventHandler

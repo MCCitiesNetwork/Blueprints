@@ -1,8 +1,8 @@
 package io.github.bl3rune.blueprints.enums;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,10 +10,11 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
- * Phase 0 lockdown for CommandType. Snapshots the command-string and
- * full-command-name for every entry, plus which entries advertise tab
- * completers. Phase 5 will rewrite this enum into DI registration; this
- * test is the contract the new wiring must satisfy.
+ * Locks the public CommandType contract: command strings, full command
+ * names, and which entries advertise a tab completer. After Phase 5 the
+ * enum is pure metadata; executor instances are built in PluginBootstrap
+ * and held in CommandRegistry, so this test no longer asserts the enum
+ * carries those instances - only the metadata other code keys off of.
  */
 class CommandTypeTest {
 
@@ -67,24 +68,22 @@ class CommandTypeTest {
         for (CommandType c : CommandType.values()) {
             assertEquals(expectedString.get(c), c.toString(), "toString for " + c.name());
             assertEquals(expectedFull.get(c), c.getFullCommandName(), "fullCommandName for " + c.name());
-            assertNotNull(c.getCommandExecutor(), c.name() + " missing executor");
         }
         assertEquals(14, CommandType.values().length);
     }
 
     @Test
     void tabCompletersOnlyOnExpectedCommands() {
-        // These commands ship a tab completer; the others must not.
         for (CommandType c : new CommandType[] {
                 CommandType.FACE, CommandType.ROTATE, CommandType.TURN,
                 CommandType.SCALE, CommandType.GIVE, CommandType.CONFIG,
                 CommandType.PLAYER, CommandType.GLOBAL }) {
-            assertNotNull(c.getTabCompleter(), c.name() + " expected tab completer");
+            assertTrue(c.hasTabCompleter(), c.name() + " expected tab completer");
         }
         for (CommandType c : new CommandType[] {
                 CommandType.BLU3PRINT, CommandType.DUPLICATE, CommandType.IMPORT,
                 CommandType.EXPORT, CommandType.NAME, CommandType.HELP }) {
-            assertNull(c.getTabCompleter(), c.name() + " should not have tab completer");
+            assertFalse(c.hasTabCompleter(), c.name() + " should not have tab completer");
         }
     }
 }

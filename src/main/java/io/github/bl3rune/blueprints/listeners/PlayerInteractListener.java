@@ -33,8 +33,8 @@ public class PlayerInteractListener implements Listener {
 
     private final Blueprints instance;
 
-    public PlayerInteractListener() {
-        instance = Blueprints.getInstance();
+    public PlayerInteractListener(Blueprints instance) {
+        this.instance = instance;
     }
 
     private InteractionCooldownService cooldowns() {

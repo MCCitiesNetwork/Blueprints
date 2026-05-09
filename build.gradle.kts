@@ -8,8 +8,8 @@ version = "1.7.5"
 repositories {
     mavenCentral()
     maven {
-        name = "spigotmc-repo"
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
     maven {
         name = "sonatype"
@@ -18,14 +18,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.12.0")
     annotationProcessor(group = "org.spigotmc", name = "plugin-annotations", version = "1.3-SNAPSHOT")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.yaml:snakeyaml:2.2")
-    testImplementation("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
 }
 
 tasks.test {

@@ -9,17 +9,22 @@ import io.github.bl3rune.blueprints.listeners.BookListener;
 import io.github.bl3rune.blueprints.listeners.MenuInteractListener;
 import io.github.bl3rune.blueprints.listeners.PlayerInteractListener;
 import io.github.bl3rune.blueprints.listeners.PlayerJoinListener;
+import io.github.bl3rune.blueprints.services.BlueprintCacheService;
 import io.github.bl3rune.blueprints.services.DataFolderMigrator;
+import io.github.bl3rune.blueprints.services.InteractionCooldownService;
+import io.github.bl3rune.blueprints.services.PlayerSessionService;
 import io.github.bl3rune.blueprints.services.RecipeRegistrar;
 import io.github.bl3rune.blueprints.services.UpdateChecker;
+import io.github.bl3rune.blueprints.services.persistence.BlueprintRepository;
+import io.github.bl3rune.blueprints.services.persistence.JsonBlueprintRepository;
 
 /**
  * Owns plugin startup and shutdown orchestration. {@link Blueprints} keeps
  * only the Bukkit lifecycle hooks and delegates all wiring to this class.
  *
- * <p>Phase 2 of the architecture overhaul introduces this seam so that
- * later phases can move runtime state (cache, player sessions, cooldowns)
- * into injected services without further surgery on the plugin main class.
+ * <p>Phase 3 expands the registry contents: the blueprint cache, player
+ * session state, and interaction cooldowns are now injectable services
+ * instead of static maps.
  */
 public final class PluginBootstrap {
 
@@ -49,7 +54,16 @@ public final class PluginBootstrap {
         recipeRegistrar.register(plugin);
         registry.register(RecipeRegistrar.class, recipeRegistrar);
 
-        plugin.loadSavedBlueprintsToCache();
+        BlueprintRepository repository = new JsonBlueprintRepository(
+                plugin.getDataFolder(), plugin.getLogger());
+        registry.register(BlueprintRepository.class, repository);
+
+        BlueprintCacheService cacheService = new BlueprintCacheService(repository, plugin.getLogger());
+        cacheService.loadFromDisk();
+        registry.register(BlueprintCacheService.class, cacheService);
+
+        registry.register(PlayerSessionService.class, new PlayerSessionService());
+        registry.register(InteractionCooldownService.class, new InteractionCooldownService());
 
         registerListeners();
         registerCommands();
@@ -58,7 +72,10 @@ public final class PluginBootstrap {
 
     public void stop() {
         plugin.getLogger().info("Stopping Blueprints");
-        plugin.saveCachedBlu3prints();
+        BlueprintCacheService cache = registry.find(BlueprintCacheService.class);
+        if (cache != null) {
+            cache.persist();
+        }
         plugin.saveConfig();
     }
 

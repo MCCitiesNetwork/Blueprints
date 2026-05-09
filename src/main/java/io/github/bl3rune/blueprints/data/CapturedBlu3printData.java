@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
 import io.github.bl3rune.blueprints.enums.Orientation;
 import io.github.bl3rune.blueprints.enums.Rotation;
-import io.github.bl3rune.blueprints.listeners.PlayerInteractListener;
 import io.github.bl3rune.blueprints.utils.EdgeCaseBlockUtils;
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
 import io.github.bl3rune.blueprints.utils.LocationUtils;
@@ -61,7 +60,10 @@ public class CapturedBlu3printData extends Blu3printData {
              }
         }
 
-        List<String> ignoreBlocks = PlayerInteractListener.getIgnoreList(player);
+        List<String> ignoreBlocks = io.github.bl3rune.blueprints.Blueprints.getInstance()
+                .getServiceRegistry()
+                .get(io.github.bl3rune.blueprints.services.InteractionCooldownService.class)
+                .getIgnoreList(player.getUniqueId().toString());
 
         selectionGrid = new MaterialData[zSize][ySize][xSize];
         this.ingredientsCount = new HashMap<>();

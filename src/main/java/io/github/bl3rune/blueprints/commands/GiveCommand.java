@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.bl3rune.blueprints.Blueprints;
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 
 public class GiveCommand implements CommandExecutor {
 
@@ -21,7 +21,7 @@ public class GiveCommand implements CommandExecutor {
         if (args.length == 0) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                player.getInventory().addItem(Blu3printItem.getBlankBlu3print());
+                player.getInventory().addItem(BlueprintItem.getBlankBlu3print());
             } else {
                 return false;
             }
@@ -34,7 +34,7 @@ public class GiveCommand implements CommandExecutor {
             if (player == null) {
                 sender.sendMessage("Not a valid player name");
             } else {
-                player.getInventory().addItem(Blu3printItem.getBlankBlu3print());
+                player.getInventory().addItem(BlueprintItem.getBlankBlu3print());
             }
         }
         return true;

@@ -19,9 +19,9 @@ import org.bukkit.persistence.PersistentDataType;
 
 import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
-import io.github.bl3rune.blueprints.data.Blu3printData;
+import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.enums.CommandType;
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.items.Hologram;
 import io.github.bl3rune.blueprints.services.InteractionCooldownService;
 
@@ -49,7 +49,7 @@ public class PlayerInteractListener implements Listener {
 
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (!Blu3printItem.isBlu3print(item, null)) {
+        if (!BlueprintItem.isBlu3print(item, null)) {
             return;
         }
 
@@ -80,14 +80,14 @@ public class PlayerInteractListener implements Listener {
             }
         }
 
-        if (Blu3printItem.isBlu3print(item, true)) {
+        if (BlueprintItem.isBlu3print(item, true)) {
             event.setCancelled(true);
             if (actionEquals(action, Action.LEFT_CLICK_BLOCK)) {
                 firstBlockSelected(player, block, item);
             } else if (actionEquals(action, Action.RIGHT_CLICK_BLOCK)) {
                 secondBlockSelected(player, block, item);
             }
-        } else if (Blu3printItem.isBlu3print(item, false)) {
+        } else if (BlueprintItem.isBlu3print(item, false)) {
             event.setCancelled(true);
             if (actionEquals(action, Action.LEFT_CLICK_BLOCK)) {
                 if (player.isSneaking()) {
@@ -163,7 +163,7 @@ public class PlayerInteractListener implements Listener {
             return;
         }
         String blu3printUUID = lore.get(1);
-        Blu3printData blu3printItem = instance.getBlu3printFrpmCache(blu3printUUID);
+        BlueprintData blu3printItem = instance.getBlueprintFromCache(blu3printUUID);
         if (blu3printItem == null) {
             player.sendMessage(ChatColor.RED + "Blu3print ID missing from cache");
             return;
@@ -182,7 +182,7 @@ public class PlayerInteractListener implements Listener {
             return;
         }
         String blu3printUuid = lore.get(1);
-        Blu3printData blu3printData = instance.getBlu3printFrpmCache(blu3printUuid);
+        BlueprintData blu3printData = instance.getBlueprintFromCache(blu3printUuid);
 
         if (blu3printData == null) {
             player.sendMessage(ChatColor.RED + "Blu3print ID missing from cache");
@@ -206,7 +206,7 @@ public class PlayerInteractListener implements Listener {
             player.sendMessage(ChatColor.RED + "Blu3print missing ID");
             return;
         }
-        Blu3printData blu3printItem = instance.getBlu3printFrpmCache(lore.get(1));
+        BlueprintData blu3printItem = instance.getBlueprintFromCache(lore.get(1));
         if (blu3printItem == null) {
             player.sendMessage(ChatColor.RED + "Blu3print ID missing from cache");
             return;

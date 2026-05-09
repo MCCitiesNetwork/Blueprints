@@ -17,7 +17,7 @@ import io.github.bl3rune.blueprints.config.GlobalConfig;
 
 /**
  * Inventory cost / discount calculator extracted from
- * {@code Blu3printData.checkPlayerHasBLocksInInventory}. Computes which
+ * {@code BlueprintData.checkPlayerHasBLocksInInventory}. Computes which
  * ingredient blocks the player still needs (after creative-mode bypass,
  * sneak-discount, and inventory + storage scans) and optionally consumes
  * them when {@code removeBlocks} is true.

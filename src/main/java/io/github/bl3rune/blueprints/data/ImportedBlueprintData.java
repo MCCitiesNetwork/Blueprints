@@ -13,9 +13,9 @@ import static io.github.bl3rune.blueprints.utils.EncodingUtils.COLUMN_END;
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.DOUBLE_CHARACTER;
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.MODIFIER;
 
-public class ImportedBlu3printData extends Blu3printData {
+public class ImportedBlueprintData extends BlueprintData {
 
-    public ImportedBlu3printData(Player player, String encodedString, String blu3printUUID) {
+    public ImportedBlueprintData(Player player, String encodedString, String blu3printUUID) {
 
         materialIgnoreList = buildMaterialIgnoreList(player, blu3printUUID);
 

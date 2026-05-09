@@ -8,7 +8,7 @@ import io.github.bl3rune.blueprints.data.ManipulatablePosition;
 
 /**
  * Validates per-player size/scale permissions and limits previously inlined
- * on {@code Blu3printData}. Stateless. Behavior is preserved exactly: same
+ * on {@code BlueprintData}. Stateless. Behavior is preserved exactly: same
  * permission keys, same messages, same null-tolerant short-circuiting.
  */
 public final class LimitValidator {

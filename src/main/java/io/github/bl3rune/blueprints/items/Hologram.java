@@ -14,9 +14,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
-import io.github.bl3rune.blueprints.config.PlayerBlu3printConfig;
+import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.config.PlayerConfig;
-import io.github.bl3rune.blueprints.data.Blu3printData;
+import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.data.ManipulatablePosition;
 import io.github.bl3rune.blueprints.data.MaterialData;
 import io.github.bl3rune.blueprints.services.domain.MaterialIgnoreResolver;
@@ -28,11 +28,11 @@ public class Hologram {
     private ManipulatablePosition position;
     private List<ArmorStand> holograms;
     private Function<Location,Location> calculateFinalLocationFunction;
-    private PlayerBlu3printConfig config;
+    private PlayerBlueprintConfig config;
     private List<String> materialIgnoreList;
     private final MaterialIgnoreResolver ignoreResolver;
 
-    public Hologram(Player player, Location startLocation, Blu3printData data, String blu3printUuid) {
+    public Hologram(Player player, Location startLocation, BlueprintData data, String blu3printUuid) {
         this.ignoreResolver = Blueprints.getInstance().getServiceRegistry().get(MaterialIgnoreResolver.class);
         String playerUUID = player.getUniqueId().toString();
         this.location = new Location(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ());
@@ -40,12 +40,12 @@ public class Hologram {
         this.position = new ManipulatablePosition(data.getPosition(), data.getPosition().getScale());
         this.holograms = new ArrayList<>();
         calculateFinalLocationFunction = data.buildCalculateFinalLocationFunction(player, startLocation, true);
-        config = Blueprints.getPlayerBlu3printConfig(playerUUID);
+        config = Blueprints.getPlayerBlueprintConfig(playerUUID);
         this.materialIgnoreList = new ArrayList<>();
         if (config != null) {
             if (!config.uuidMatches(blu3printUuid)) {
                 config = null;
-                Blueprints.setPlayerBlu3printConfig(playerUUID, null);
+                Blueprints.setPlayerBlueprintConfig(playerUUID, null);
                 player.sendMessage(ChatColor.RED + "Cleared blu3print config as using different blu3print!");
             } else {
                 materialIgnoreList.addAll(config.getIgnoredMaterials());

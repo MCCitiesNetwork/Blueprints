@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.bl3rune.blueprints.data.Blu3printData;
+import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.enums.Turn;
 
 public class TurnCommand implements CommandExecutor {
@@ -23,7 +23,7 @@ public class TurnCommand implements CommandExecutor {
                 return true;
             }
 
-            Blu3printData data = CommandSupport.lookupCached(player, item);
+            BlueprintData data = CommandSupport.lookupCached(player, item);
             Turn turn = null;
             if (args.length > 0) {
                 try {

@@ -8,7 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 
 /**
  * Registers the Blu3print Writer crafting recipe. The ingredient list is read
@@ -24,7 +24,7 @@ public final class RecipeRegistrar {
     public void register(JavaPlugin plugin) {
         ShapelessRecipe recipe = new ShapelessRecipe(
                 new NamespacedKey(plugin, "Blu3print_Writer"),
-                Blu3printItem.getBlankBlu3print());
+                BlueprintItem.getBlankBlu3print());
         recipe.setGroup("Tools & Utilities");
 
         String recipeKey = plugin.getConfig().contains(NEW_KEY) ? NEW_KEY : LEGACY_KEY;
@@ -39,7 +39,7 @@ public final class RecipeRegistrar {
             plugin.getLogger().warning("Invalid blu3print recipe. using default recipe");
             ShapelessRecipe fallback = new ShapelessRecipe(
                     new NamespacedKey(plugin, "Blu3print_Writer"),
-                    Blu3printItem.getBlankBlu3print());
+                    BlueprintItem.getBlankBlu3print());
             fallback.addIngredient(Material.PAPER);
             fallback.addIngredient(Material.LAPIS_LAZULI);
             fallback.addIngredient(Material.FEATHER);

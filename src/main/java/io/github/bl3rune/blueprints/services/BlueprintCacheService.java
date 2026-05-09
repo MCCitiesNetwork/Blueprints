@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.bl3rune.blueprints.config.GlobalConfig;
-import io.github.bl3rune.blueprints.data.Blu3printData;
-import io.github.bl3rune.blueprints.data.ImportedBlu3printData;
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.data.BlueprintData;
+import io.github.bl3rune.blueprints.data.ImportedBlueprintData;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.services.persistence.BlueprintRecord;
 import io.github.bl3rune.blueprints.services.persistence.BlueprintRepository;
 
@@ -25,7 +25,7 @@ public final class BlueprintCacheService {
 
     private final BlueprintRepository repository;
     private final Logger logger;
-    private final Map<String, Blu3printData> cache = new HashMap<>();
+    private final Map<String, BlueprintData> cache = new HashMap<>();
 
     public BlueprintCacheService(BlueprintRepository repository, Logger logger) {
         this.repository = repository;
@@ -37,10 +37,10 @@ public final class BlueprintCacheService {
         if (records.isEmpty()) {
             return;
         }
-        Map<String, Blu3printData> loaded = new HashMap<>();
+        Map<String, BlueprintData> loaded = new HashMap<>();
         for (BlueprintRecord record : records) {
             loaded.put(record.getUuid(),
-                    new ImportedBlu3printData(null, record.getEncoded(), record.getUuid()));
+                    new ImportedBlueprintData(null, record.getEncoded(), record.getUuid()));
         }
         if (GlobalConfig.isImportedBlu3printsLoggingEnabled()) {
             loaded.forEach((k, v) -> logger.info(k + " : " + v.getEncodedString()));
@@ -57,12 +57,12 @@ public final class BlueprintCacheService {
         repository.saveAll(records);
     }
 
-    public Blu3printData get(String key) {
+    public BlueprintData get(String key) {
         return cache.getOrDefault(key, null);
     }
 
-    public Blu3printData get(ItemStack blu3print, Player player) {
-        String key = Blu3printItem.extractCacheKeyFromBlu3print(blu3print);
+    public BlueprintData get(ItemStack blu3print, Player player) {
+        String key = BlueprintItem.extractCacheKeyFromBlu3print(blu3print);
         if (key == null) {
             logger.warning("Blu3print ID is missing from the server cache");
             if (player != null) {
@@ -80,7 +80,7 @@ public final class BlueprintCacheService {
                 .orElse(null);
     }
 
-    public synchronized void saveOrUpdate(String key, Blu3printData data) {
+    public synchronized void saveOrUpdate(String key, BlueprintData data) {
         cache.put(key, data);
         persist();
     }

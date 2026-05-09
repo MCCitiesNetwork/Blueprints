@@ -8,13 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import io.github.bl3rune.blueprints.config.GlobalConfig;
-import io.github.bl3rune.blueprints.config.PlayerBlu3printConfig;
+import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.config.PlayerConfig;
 import io.github.bl3rune.blueprints.services.PlayerSessionService;
 
 /**
  * Single source of truth for the ignore-material logic that was previously
- * duplicated between {@code Blu3printData} and {@code Hologram}. Owns the
+ * duplicated between {@code BlueprintData} and {@code Hologram}. Owns the
  * lazily-loaded global ignore list and combines player-/blueprint-specific
  * lists with the global list when checking material ignorability.
  */
@@ -34,7 +34,7 @@ public final class MaterialIgnoreResolver {
             return ignoreList;
         }
         String playerUUID = player.getUniqueId().toString();
-        PlayerBlu3printConfig pbc = sessions.getPlayerBlueprintConfig(playerUUID);
+        PlayerBlueprintConfig pbc = sessions.getPlayerBlueprintConfig(playerUUID);
         if (pbc != null) {
             if (pbc.uuidMatches(blu3printUUID)) {
                 ignoreList.addAll(pbc.getIgnoredMaterials());

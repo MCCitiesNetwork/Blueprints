@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.Blueprints;
-import io.github.bl3rune.blueprints.data.Blu3printData;
+import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -39,7 +39,7 @@ public class ExportCommand implements CommandExecutor {
             }
 
             sender.sendMessage(ChatColor.BLUE + lore.get(0));
-            Blu3printData data = Blueprints.getInstance().getBlu3printFrpmCache(lore.get(1));
+            BlueprintData data = Blueprints.getInstance().getBlueprintFromCache(lore.get(1));
             BaseComponent component = new TextComponent(ChatColor.GRAY + data.getEncodedString());
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to copy to clipboard")));
             component.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, data.getEncodedString()));

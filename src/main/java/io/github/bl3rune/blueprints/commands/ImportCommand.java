@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import io.github.bl3rune.blueprints.Blueprints;
-import io.github.bl3rune.blueprints.data.Blu3printData;
-import io.github.bl3rune.blueprints.data.ImportedBlu3printData;
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.data.BlueprintData;
+import io.github.bl3rune.blueprints.data.ImportedBlueprintData;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
 
 import org.bukkit.inventory.ItemStack;
@@ -49,8 +49,8 @@ public class ImportCommand implements CommandExecutor {
             if (uuid == null) {
                 uuid = UUID.randomUUID().toString();
             }
-            Blu3printItem blu3print = Blu3printItem.getFinishedBlu3print(uuid, "imported by" + player.getDisplayName(), args[0], true);
-            Blu3printData blu3printData = new ImportedBlu3printData(player, args[1], uuid);
+            BlueprintItem blu3print = BlueprintItem.getFinishedBlu3print(uuid, "imported by" + player.getDisplayName(), args[0], true);
+            BlueprintData blu3printData = new ImportedBlueprintData(player, args[1], uuid);
             if (blu3printData.getPosition() == null) return true;
             instance.saveOrUpdateCachedBlu3print(uuid, blu3printData);
 

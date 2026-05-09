@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
-import io.github.bl3rune.blueprints.config.PlayerBlu3printConfig;
+import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.enums.Config;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
 
@@ -55,13 +55,13 @@ public class ConfigCommand implements CommandExecutor {
             String blu3printUuid = lore.get(1);
 
             String playerUUID = player.getUniqueId().toString();
-            PlayerBlu3printConfig ppbc = Blueprints.getPlayerBlu3printConfig(playerUUID);
+            PlayerBlueprintConfig ppbc = Blueprints.getPlayerBlueprintConfig(playerUUID);
             if (ppbc == null) {
-                ppbc = new PlayerBlu3printConfig(blu3printUuid);
+                ppbc = new PlayerBlueprintConfig(blu3printUuid);
             }
             switch (config) {
                 case CLEAR:
-                    Blueprints.setPlayerBlu3printConfig(playerUUID, null);
+                    Blueprints.setPlayerBlueprintConfig(playerUUID, null);
                     player.sendMessage(ChatColor.GREEN + "Player blu3print config reset!");
                     return true;
                 case HOLOGRAM_VIEW_XYZ:
@@ -78,13 +78,13 @@ public class ConfigCommand implements CommandExecutor {
                     break;
             }
             if (ppbc != null) {
-                Blueprints.setPlayerBlu3printConfig(playerUUID, ppbc);
+                Blueprints.setPlayerBlueprintConfig(playerUUID, ppbc);
             }
         }
         return true;
     }
 
-    private PlayerBlu3printConfig setHologramViewLayers(PlayerBlu3printConfig ppbc, String[] args, Config config,
+    private PlayerBlueprintConfig setHologramViewLayers(PlayerBlueprintConfig ppbc, String[] args, Config config,
             Player player) {
         if (args.length < 2 || (config == Config.HOLOGRAM_VIEW_XYZ && args.length < 4)) {
             player.sendMessage(ChatColor.RED + "Not enough arguments for setting hologram view layers");
@@ -172,7 +172,7 @@ public class ConfigCommand implements CommandExecutor {
         return sb.toString();
     }
 
-    private PlayerBlu3printConfig modifyMaterialIgnoreList(PlayerBlu3printConfig ppbc, String[] args, Config config,
+    private PlayerBlueprintConfig modifyMaterialIgnoreList(PlayerBlueprintConfig ppbc, String[] args, Config config,
             Player player) {
         if (args.length < 2) {
             player.sendMessage("Usage: /blu3print.config IGNORE_MATERIALS [material]");

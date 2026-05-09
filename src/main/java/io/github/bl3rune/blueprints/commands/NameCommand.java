@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
 
 public class NameCommand implements CommandExecutor {
@@ -26,7 +26,7 @@ public class NameCommand implements CommandExecutor {
                 return false;
             }
             StringBuilder sb = new StringBuilder();
-            sb.append(Blu3printItem.BLU3PRINT_PREFIX + " :");
+            sb.append(BlueprintItem.BLU3PRINT_PREFIX + " :");
             for (String arg : args) {
                 sb.append(" ");
                 sb.append(arg);

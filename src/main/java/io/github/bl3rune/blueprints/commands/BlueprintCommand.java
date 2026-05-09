@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.enums.MenuItems;
 
-public class Blu3printCommand implements CommandExecutor {
+public class BlueprintCommand implements CommandExecutor {
 
     private Inventory inventory;
 

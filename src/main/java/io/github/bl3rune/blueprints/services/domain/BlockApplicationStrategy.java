@@ -15,7 +15,7 @@ import io.github.bl3rune.blueprints.utils.EdgeCaseBlockUtils;
  * Block application strategy: edge-case blocks dispatch to
  * {@link EdgeCaseBlockUtils}, blocks with complex {@code BlockData} go through
  * {@code Bukkit.createBlockData}, and the remainder fall back to a plain
- * {@code setType}. Behavior matches {@code Blu3printData.placeBlock}.
+ * {@code setType}. Behavior matches {@code BlueprintData.placeBlock}.
  */
 public final class BlockApplicationStrategy {
 

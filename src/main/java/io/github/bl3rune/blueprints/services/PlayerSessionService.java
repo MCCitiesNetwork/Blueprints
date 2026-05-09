@@ -3,7 +3,7 @@ package io.github.bl3rune.blueprints.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.bl3rune.blueprints.config.PlayerBlu3printConfig;
+import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.config.PlayerConfig;
 
 /**
@@ -14,7 +14,7 @@ import io.github.bl3rune.blueprints.config.PlayerConfig;
 public final class PlayerSessionService {
 
     private final Map<String, PlayerConfig> playerConfigs = new HashMap<>();
-    private final Map<String, PlayerBlu3printConfig> playerBlueprintConfigs = new HashMap<>();
+    private final Map<String, PlayerBlueprintConfig> playerBlueprintConfigs = new HashMap<>();
 
     public PlayerConfig getPlayerConfig(String playerUUID) {
         return playerConfigs.getOrDefault(playerUUID, null);
@@ -28,11 +28,11 @@ public final class PlayerSessionService {
         }
     }
 
-    public PlayerBlu3printConfig getPlayerBlueprintConfig(String playerUUID) {
+    public PlayerBlueprintConfig getPlayerBlueprintConfig(String playerUUID) {
         return playerBlueprintConfigs.getOrDefault(playerUUID, null);
     }
 
-    public void setPlayerBlueprintConfig(String playerUUID, PlayerBlu3printConfig config) {
+    public void setPlayerBlueprintConfig(String playerUUID, PlayerBlueprintConfig config) {
         if (config == null) {
             playerBlueprintConfigs.remove(playerUUID);
         } else {

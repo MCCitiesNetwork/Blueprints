@@ -3,7 +3,7 @@ package io.github.bl3rune.blueprints.core;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import io.github.bl3rune.blueprints.Blueprints;
-import io.github.bl3rune.blueprints.commands.Blu3printCommand;
+import io.github.bl3rune.blueprints.commands.BlueprintCommand;
 import io.github.bl3rune.blueprints.commands.ConfigCommand;
 import io.github.bl3rune.blueprints.commands.ConfigTabCompleter;
 import io.github.bl3rune.blueprints.commands.DuplicateCommand;
@@ -129,7 +129,7 @@ public final class PluginBootstrap {
 
     private CommandRegistry buildCommandRegistry() {
         CommandRegistry r = new CommandRegistry();
-        r.register(CommandType.BLU3PRINT, new Blu3printCommand());
+        r.register(CommandType.BLU3PRINT, new BlueprintCommand());
         r.register(CommandType.DUPLICATE, new DuplicateCommand());
         r.register(CommandType.FACE, new FaceCommand(), new FaceTabCompleter());
         r.register(CommandType.ROTATE, new RotateCommand(), new RotateTabCompleter());

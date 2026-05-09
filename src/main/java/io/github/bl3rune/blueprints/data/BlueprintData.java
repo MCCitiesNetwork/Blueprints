@@ -32,7 +32,7 @@ import io.github.bl3rune.blueprints.utils.Pair;
  * block application) to dedicated services in
  * {@code io.github.bl3rune.blueprints.services.domain}.
  */
-public abstract class Blu3printData {
+public abstract class BlueprintData {
 
     protected MaterialData[][][] selectionGrid; // [z] [y] [x]
     protected Map<String, Integer> ingredientsCount; // key: material, value: count

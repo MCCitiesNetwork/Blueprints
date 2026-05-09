@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.github.bl3rune.blueprints.config.PlayerBlu3printConfig;
+import io.github.bl3rune.blueprints.config.PlayerBlueprintConfig;
 import io.github.bl3rune.blueprints.config.PlayerConfig;
 import io.github.bl3rune.blueprints.core.PluginBootstrap;
 import io.github.bl3rune.blueprints.core.ServiceRegistry;
-import io.github.bl3rune.blueprints.data.Blu3printData;
+import io.github.bl3rune.blueprints.data.BlueprintData;
 import io.github.bl3rune.blueprints.services.BlueprintCacheService;
 import io.github.bl3rune.blueprints.services.PlayerSessionService;
 
@@ -52,11 +52,11 @@ public final class Blueprints extends JavaPlugin {
         playerSessions().setPlayerConfig(playerUUID, config);
     }
 
-    public static PlayerBlu3printConfig getPlayerBlu3printConfig(String playerUUID) {
+    public static PlayerBlueprintConfig getPlayerBlueprintConfig(String playerUUID) {
         return playerSessions().getPlayerBlueprintConfig(playerUUID);
     }
 
-    public static void setPlayerBlu3printConfig(String playerUUID, PlayerBlu3printConfig config) {
+    public static void setPlayerBlueprintConfig(String playerUUID, PlayerBlueprintConfig config) {
         playerSessions().setPlayerBlueprintConfig(playerUUID, config);
     }
 
@@ -86,11 +86,11 @@ public final class Blueprints extends JavaPlugin {
         return bootstrap.getRegistry().get(BlueprintCacheService.class);
     }
 
-    public Blu3printData getBlu3printFrpmCache(ItemStack blu3print, Player player) {
+    public BlueprintData getBlueprintFromCache(ItemStack blu3print, Player player) {
         return cache().get(blu3print, player);
     }
 
-    public Blu3printData getBlu3printFrpmCache(String key) {
+    public BlueprintData getBlueprintFromCache(String key) {
         return cache().get(key);
     }
 
@@ -98,7 +98,7 @@ public final class Blueprints extends JavaPlugin {
         return cache().keyFromEncoding(encoded);
     }
 
-    public void saveOrUpdateCachedBlu3print(String key, Blu3printData data) {
+    public void saveOrUpdateCachedBlu3print(String key, BlueprintData data) {
         cache().saveOrUpdate(key, data);
     }
 }

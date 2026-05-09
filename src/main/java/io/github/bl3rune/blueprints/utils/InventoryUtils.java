@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 
 public class InventoryUtils {
 
@@ -16,7 +16,7 @@ public class InventoryUtils {
 
     public static ItemStack getHeldBlu3print(Player player, Boolean blank) {
         ItemStack item = player.getInventory().getItemInMainHand();
-        return Blu3printItem.isBlu3print(item, blank) ? item : null;
+        return BlueprintItem.isBlu3print(item, blank) ? item : null;
     }
 
     public static int getBlu3printInventoryPosition(Player player, Boolean blank) {
@@ -24,7 +24,7 @@ public class InventoryUtils {
         for (int i = 0; i < inventory.length; i++) {
             ItemStack item = inventory[i];
             if (itemIsBlank(item)) continue;
-            if (Blu3printItem.isBlu3print(item, blank)) {
+            if (BlueprintItem.isBlu3print(item, blank)) {
                 return i;
             }
         }

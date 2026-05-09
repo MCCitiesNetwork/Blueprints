@@ -3,14 +3,14 @@ package io.github.bl3rune.blueprints.config;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerBlu3printConfig {
+public class PlayerBlueprintConfig {
 
     private String uuid; // Blu3print to apply config to
     private int [] [] hologramViewLayers; // X[], Y[], Z[]
     private List<String> ignoredMaterials; // Materials to ignore
 
 
-    public PlayerBlu3printConfig(String uuid) {
+    public PlayerBlueprintConfig(String uuid) {
         this.uuid = uuid;
         this.hologramViewLayers = null;
         this.ignoredMaterials = new ArrayList<>();

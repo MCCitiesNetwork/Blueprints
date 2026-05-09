@@ -8,9 +8,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.Blueprints;
-import io.github.bl3rune.blueprints.data.Blu3printData;
-import io.github.bl3rune.blueprints.data.ImportedBlu3printData;
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.data.BlueprintData;
+import io.github.bl3rune.blueprints.data.ImportedBlueprintData;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
 
 /**
@@ -35,8 +35,8 @@ public final class CommandSupport {
         return item;
     }
 
-    public static Blu3printData lookupCached(Player player, ItemStack item) {
-        Blu3printData data = Blueprints.getInstance().getBlu3printFrpmCache(item, player);
+    public static BlueprintData lookupCached(Player player, ItemStack item) {
+        BlueprintData data = Blueprints.getInstance().getBlueprintFromCache(item, player);
         if (data == null) {
             player.sendMessage("Blu3print data not found");
         }
@@ -48,10 +48,10 @@ public final class CommandSupport {
         String key = instance.getKeyFromEncoding(newEncoding);
         if (key == null) {
             key = UUID.randomUUID().toString();
-            instance.saveOrUpdateCachedBlu3print(key, new ImportedBlu3printData(player, newEncoding, key));
+            instance.saveOrUpdateCachedBlu3print(key, new ImportedBlueprintData(player, newEncoding, key));
         }
         ItemMeta meta = item.getItemMeta();
-        Blu3printItem newItem = Blu3printItem.getFinishedBlu3print(key,
+        BlueprintItem newItem = BlueprintItem.getFinishedBlu3print(key,
                 "modified by " + player.getDisplayName(), meta.getDisplayName(), false);
         player.getInventory().setItemInMainHand(newItem);
     }

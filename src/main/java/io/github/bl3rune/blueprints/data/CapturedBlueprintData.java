@@ -24,9 +24,9 @@ import static io.github.bl3rune.blueprints.utils.EncodingUtils.VOID;
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.ROW_END;
 import static io.github.bl3rune.blueprints.utils.EncodingUtils.COLUMN_END;
 
-public class CapturedBlu3printData extends Blu3printData {
+public class CapturedBlueprintData extends BlueprintData {
 
-    public CapturedBlu3printData(Player player, String pos1, String pos2, String blu3printUUID) {
+    public CapturedBlueprintData(Player player, String pos1, String pos2, String blu3printUUID) {
 
         materialIgnoreList = buildMaterialIgnoreList(player, blu3printUUID);
 

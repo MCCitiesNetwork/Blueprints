@@ -13,14 +13,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
 
-public class Blu3printItem extends ItemStack {
+public class BlueprintItem extends ItemStack {
 
     public static final Material LOCKED_MATERIAL = Material.WRITTEN_BOOK;
     public static final Material UNLOCKED_MATERIAL = Material.WRITABLE_BOOK;
     public static final String BLU3PRINT_PREFIX = ChatColor.BLUE + "Blu3print";
 
-    public static Blu3printItem getBlankBlu3print() {
-        Blu3printItem blu3print = new Blu3printItem(UNLOCKED_MATERIAL);
+    public static BlueprintItem getBlankBlu3print() {
+        BlueprintItem blu3print = new BlueprintItem(UNLOCKED_MATERIAL);
         ItemMeta meta = blu3print.getItemMeta();
         meta.setDisplayName(BLU3PRINT_PREFIX + " Writer");
         meta.setLore(Arrays.asList("Used for composing Blu3prints"));
@@ -28,9 +28,9 @@ public class Blu3printItem extends ItemStack {
         return blu3print;
     }
 
-    public static Blu3printItem getFinishedBlu3print(String uuid, String author, String name, boolean isImported) {
+    public static BlueprintItem getFinishedBlu3print(String uuid, String author, String name, boolean isImported) {
         List<String> lore = Arrays.asList(author, uuid);
-        Blu3printItem blu3print = new Blu3printItem(LOCKED_MATERIAL);
+        BlueprintItem blu3print = new BlueprintItem(LOCKED_MATERIAL);
         ItemMeta meta = blu3print.getItemMeta();
         name = name.startsWith(BLU3PRINT_PREFIX) ? EncodingUtils.modifierSplit(name)[1].trim() : name;
         meta.setDisplayName(BLU3PRINT_PREFIX + " : " + name);
@@ -82,10 +82,10 @@ public class Blu3printItem extends ItemStack {
         }
     }
 
-    public Blu3printItem() {
+    public BlueprintItem() {
     }
 
-    public Blu3printItem(Material material) {
+    public BlueprintItem(Material material) {
         super(material);
     }
 

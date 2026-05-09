@@ -16,7 +16,7 @@ import io.github.bl3rune.blueprints.enums.Orientation;
  * the player facing/alignment configuration, and whether placement is on top
  * of the clicked block, produce the function that maps grid coordinates to
  * world coordinates. Behavior matches the original
- * {@code Blu3printData.buildCalculateFinalLocationFunction} exactly.
+ * {@code BlueprintData.buildCalculateFinalLocationFunction} exactly.
  */
 public final class PlacementPlanner {
 

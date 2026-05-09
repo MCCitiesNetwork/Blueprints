@@ -16,10 +16,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import io.github.bl3rune.blueprints.Blueprints;
-import io.github.bl3rune.blueprints.data.Blu3printData;
-import io.github.bl3rune.blueprints.data.CapturedBlu3printData;
-import io.github.bl3rune.blueprints.data.ImportedBlu3printData;
-import io.github.bl3rune.blueprints.items.Blu3printItem;
+import io.github.bl3rune.blueprints.data.BlueprintData;
+import io.github.bl3rune.blueprints.data.CapturedBlueprintData;
+import io.github.bl3rune.blueprints.data.ImportedBlueprintData;
+import io.github.bl3rune.blueprints.items.BlueprintItem;
 import io.github.bl3rune.blueprints.utils.InventoryUtils;
 
 public class BookListener implements Listener {
@@ -47,8 +47,8 @@ public class BookListener implements Listener {
         ItemMeta itemMeta = book.getItemMeta();
         BookMeta bookMeta = event.getNewBookMeta();
 
-        Blu3printItem finishedBook = null;
-        Blu3printData blu3printData = null;
+        BlueprintItem finishedBook = null;
+        BlueprintData blu3printData = null;
         event.setCancelled(true);
 
         if (bookMeta.hasPages() && !bookMeta.getPages().isEmpty() && bookMeta.getPages().stream().anyMatch(p -> !p.isEmpty())) {
@@ -62,8 +62,8 @@ public class BookListener implements Listener {
             if (cacheKey != null) {
                 uuid = cacheKey;
             }
-            finishedBook = Blu3printItem.getFinishedBlu3print(uuid, "imported by " + player.getDisplayName(), bookMeta.getTitle(), true);
-            blu3printData = new ImportedBlu3printData(player, encodedString, uuid);
+            finishedBook = BlueprintItem.getFinishedBlu3print(uuid, "imported by " + player.getDisplayName(), bookMeta.getTitle(), true);
+            blu3printData = new ImportedBlueprintData(player, encodedString, uuid);
             if (blu3printData.getPosition() == null) return;
             bookMeta.setPages(new ArrayList<>());
             book.setItemMeta(bookMeta);
@@ -71,8 +71,8 @@ public class BookListener implements Listener {
             String playerUuid = player.getUniqueId().toString();
             String pos1 = extractLocation(itemMeta,  "location1-" + playerUuid);
             String pos2 = extractLocation(itemMeta,  "location2-" + playerUuid);
-            finishedBook = Blu3printItem.getFinishedBlu3print(uuid, "created by " + player.getDisplayName(), bookMeta.getTitle(), false);
-            blu3printData = new CapturedBlu3printData(player, pos1, pos2, uuid);
+            finishedBook = BlueprintItem.getFinishedBlu3print(uuid, "created by " + player.getDisplayName(), bookMeta.getTitle(), false);
+            blu3printData = new CapturedBlueprintData(player, pos1, pos2, uuid);
             if (blu3printData.getPosition() == null) return;
         }
         instance.saveOrUpdateCachedBlu3print(uuid, blu3printData);

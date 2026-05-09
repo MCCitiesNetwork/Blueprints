@@ -6,10 +6,15 @@ import java.util.function.Function;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display.Brightness;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
@@ -27,7 +32,7 @@ public class Hologram {
     private Location location;
     private MaterialData [][][] selectionGrid;
     private ManipulatablePosition position;
-    private List<ArmorStand> holograms;
+    private List<ItemDisplay> holograms;
     private Function<Location,Location> calculateFinalLocationFunction;
     private PlayerBlueprintConfig config;
     private List<String> materialIgnoreList;
@@ -79,14 +84,14 @@ public class Hologram {
                 continue;
             }
             Location loc = calculateFinalLocationFunction.apply(new Location(location.getWorld(), coords[2], coords[1], coords[0]));
-            Location placeLocation = new Location(loc.getWorld(), loc.getX() + 0.5, loc.getY() + 0.1, loc.getZ() + 0.5);
+            Location placeLocation = new Location(loc.getWorld(), loc.getX() + 0.5, loc.getY() + 0.5, loc.getZ() + 0.5);
             Block block = placeLocation.getBlock();
             if (block != null && !ignoreResolver.isIgnorable(block.getType(), materialIgnoreList)) {
                 coords = position.next(true);
                 continue;
             }
 
-            buildArmourStand(placeLocation, data);
+            buildDisplay(placeLocation, data);
             coords = position.next(true);
         }
 
@@ -98,21 +103,19 @@ public class Hologram {
         }.runTaskLater(Blueprints.getInstance(), 20 * GlobalConfig.getHologramTtl());
     }
 
-    private void buildArmourStand(Location l, MaterialData data) {
-        ArmorStand armorStand = (ArmorStand) l.getWorld().spawn(l, ArmorStand.class, (ArmorStand a) -> {
-            a.setVisible(false);
-            a.setGravity(false);
-            a.setCollidable(false);
-            a.setArms(false);
-            a.setBasePlate(false);
-            a.setCanPickupItems(false);
-            a.setMarker(true);
-            a.setPersistent(false);
-            a.setSmall(true);
-            a.getEquipment().setHelmet(new ItemStack(data.getMaterial()));
-            a.teleport(new Location(l.getWorld(), l.getX(), l.getY() - 0.5, l.getZ()));
+    private void buildDisplay(Location l, MaterialData data) {
+        ItemDisplay display = l.getWorld().spawn(l, ItemDisplay.class, d -> {
+            d.setItemStack(new ItemStack(data.getMaterial()));
+            d.setItemDisplayTransform(ItemDisplayTransform.NONE);
+            d.setPersistent(false);
+            d.setBrightness(new Brightness(15, 15));
+            d.setTransformation(new Transformation(
+                    new Vector3f(-0.5f, -0.5f, -0.5f),
+                    new AxisAngle4f(0f, 0f, 0f, 1f),
+                    new Vector3f(1f, 1f, 1f),
+                    new AxisAngle4f(0f, 0f, 0f, 1f)));
         });
-        this.holograms.add(armorStand);
+        this.holograms.add(display);
     }
 
     private boolean withinLayers(int [][] layers, int[] coords) {

@@ -1,49 +1,44 @@
 package io.github.bl3rune.blueprints.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Container;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
 
 import io.github.bl3rune.blueprints.Blueprints;
 import io.github.bl3rune.blueprints.config.GlobalConfig;
-import io.github.bl3rune.blueprints.config.PlayerBlu3printConfig;
-import io.github.bl3rune.blueprints.config.PlayerConfig;
-import io.github.bl3rune.blueprints.enums.Alignment;
+import io.github.bl3rune.blueprints.core.ServiceRegistry;
 import io.github.bl3rune.blueprints.enums.Orientation;
 import io.github.bl3rune.blueprints.enums.Rotation;
 import io.github.bl3rune.blueprints.enums.Turn;
-import io.github.bl3rune.blueprints.utils.EdgeCaseBlockUtils;
+import io.github.bl3rune.blueprints.services.domain.BlockApplicationStrategy;
+import io.github.bl3rune.blueprints.services.domain.InventoryCostCalculator;
+import io.github.bl3rune.blueprints.services.domain.LimitValidator;
+import io.github.bl3rune.blueprints.services.domain.MaterialIgnoreResolver;
+import io.github.bl3rune.blueprints.services.domain.PlacementPlanner;
 import io.github.bl3rune.blueprints.utils.EncodingUtils;
 import io.github.bl3rune.blueprints.utils.Pair;
 
-import static io.github.bl3rune.blueprints.Blueprints.logger;
-
+/**
+ * Domain entity for a captured/imported blueprint. After Phase 4 of the
+ * architecture overhaul this class holds state and delegates orchestration
+ * (placement, ignore-material resolution, inventory accounting, limits, and
+ * block application) to dedicated services in
+ * {@code io.github.bl3rune.blueprints.services.domain}.
+ */
 public abstract class Blu3printData {
-
-    protected static List<String> globalMaterialIgnoreList = new ArrayList<>();
 
     protected MaterialData[][][] selectionGrid; // [z] [y] [x]
     protected Map<String, Integer> ingredientsCount; // key: material, value: count
     protected Map<String, String> ingredientsMap; // key: material, value: encoded
     protected Map<String, String> complexDataMap; // key: complex-mapping, value: complex-encoding
-    protected List<String> materialIgnoreList; // list of materials to ignore
+    protected List<String> materialIgnoreList; // player + per-blueprint ignored materials
     protected ManipulatablePosition position;
     protected String encoded;
 
@@ -94,16 +89,21 @@ public abstract class Blu3printData {
     // PLACING BLU3PRINT SECTION
 
     public void placeBlocks(Player player, Location location, boolean forced, boolean onTop, String blu3printUUID) {
-        if (!playerAllowedToUse(player)) {
+        ServiceRegistry registry = registry();
+        LimitValidator limits = registry.get(LimitValidator.class);
+        if (!limits.playerAllowedToUse(player, position)) {
             return;
         }
-        materialIgnoreList = buildMaterialIgnoreList(player, blu3printUUID);
+        MaterialIgnoreResolver ignoreResolver = registry.get(MaterialIgnoreResolver.class);
+        materialIgnoreList = ignoreResolver.resolvePlayerIgnoreList(player, blu3printUUID);
 
         Function<Location, Location> calculateFinalLocation = buildCalculateFinalLocationFunction(player, location,
                 onTop);
-        Map<String, Integer> blocksUnableToPlace = checkSpaceIsClear(calculateFinalLocation);
+        Map<String, Integer> blocksUnableToPlace = checkSpaceIsClear(calculateFinalLocation, ignoreResolver);
 
-        Map<String, Integer> missingBlocks = checkPlayerHasBLocksInInventory(player, false, blocksUnableToPlace);
+        InventoryCostCalculator costs = registry.get(InventoryCostCalculator.class);
+        Map<String, Integer> missingBlocks = costs.checkPlayerHasBlocks(player, false, ingredientsCount,
+                blocksUnableToPlace);
         if (!missingBlocks.isEmpty()) {
             sendMessage(player, ChatColor.RED + "Missing these blocks to place the blu3print:");
             missingBlocks
@@ -122,14 +122,16 @@ public abstract class Blu3printData {
             }
         }
 
-        checkPlayerHasBLocksInInventory(player, true, blocksUnableToPlace);
+        costs.checkPlayerHasBlocks(player, true, ingredientsCount, blocksUnableToPlace);
 
+        BlockApplicationStrategy applier = registry.get(BlockApplicationStrategy.class);
         int[] coords = position.next(true);
         while (coords != null) {
 
             int scale = position.getScale();
             MaterialData data = selectionGrid[coords[0] / scale][coords[1] / scale][coords[2] / scale];
-            if (data == null || data.getMaterial() == null || isIgnorable(data.getMaterial())) {
+            if (data == null || data.getMaterial() == null
+                    || ignoreResolver.isIgnorable(data.getMaterial(), materialIgnoreList)) {
                 coords = position.next(true);
                 continue;
             }
@@ -137,292 +139,43 @@ public abstract class Blu3printData {
             Location placeLocation = calculateFinalLocation
                     .apply(new Location(location.getWorld(), coords[2], coords[1], coords[0]));
             Block block = placeLocation.getBlock();
-            if (block != null && !isIgnorable(block.getType())) {
+            if (block != null && !ignoreResolver.isIgnorable(block.getType(), materialIgnoreList)) {
                 coords = position.next(true);
                 continue;
             }
 
-            placeBlock(player, placeLocation, data);
+            applier.place(player, placeLocation, data);
             coords = position.next(true);
         }
-
     }
 
     public Function<Location, Location> buildCalculateFinalLocationFunction(Player player, Location location,
             boolean onTop) {
-        final Alignment align = GlobalConfig.getAlignment();
-        final boolean relative = GlobalConfig.getRelativePlacement();
-        final BlockFace playerFacing = Orientation.getCartesianBlockFace(player.getFacing());
-        Double x = location.getX();
-        Double y = location.getY() + (onTop ? 1 : 0);
-        Double z = location.getZ();
-        double xSize = position.getXSize();
-        double xSizeScaled = xSize * position.getScale();
-
-        if (relative) {
-            switch (playerFacing) {
-                case NORTH:
-                    if (xSize > 1 && align == Alignment.LEFT) {
-                        x = x + xSizeScaled - 1;
-                    } else if (xSize > 1 && align == Alignment.CENTER) {
-                        x = x + (xSizeScaled / 2);
-                    }
-                    break;
-                case EAST:
-                    if (xSize > 1 && align == Alignment.LEFT) {
-                        z = z + xSizeScaled - 1;
-                    } else if (xSize > 1 && align == Alignment.CENTER) {
-                        z = z + (xSizeScaled / 2);
-                    }
-                    break;
-                case SOUTH:
-                default:
-                    if (xSize > 1 && align == Alignment.LEFT) {
-                        x = x - xSizeScaled + 1;
-                    } else if (xSize > 1 && align == Alignment.CENTER) {
-                        x = x - (xSizeScaled / 2);
-                    }
-                    break;
-                case WEST:
-                    if (xSize > 1 && align == Alignment.LEFT) {
-                        z = z - xSizeScaled + 1;
-                    } else if (xSize > 1 && align == Alignment.CENTER) {
-                        z = z - (xSizeScaled / 2);
-                    }
-            }
-        } else { // NON RELATIVE IS ALWAYS FROM PLAYER LOOKING SOUTH WITH RIGHT ALIGNMENT AS
-                 // DEFAULT
-            if (xSize > 1 && align == Alignment.LEFT) {
-                x = x - xSizeScaled;
-            } else if (xSize > 1 && align == Alignment.CENTER) {
-                x = x - (xSizeScaled / 2);
-            }
-        }
-
-        final double xx = x.doubleValue();
-        final double yy = y.doubleValue();
-        final double zz = z.doubleValue();
-
-        return (Location coords) -> {
-            Double cx = coords.getX();
-            Double cy = coords.getY() + yy;
-            Double cz = coords.getZ();
-
-            if (relative) {
-                switch (playerFacing) {
-                    case NORTH:
-                        cx = xx - cx - 0.5;
-                        cz = zz - cz;
-                        break;
-                    case EAST:
-                        double ex = xx + cz;
-                        double ez = zz - cx - 0.5;
-                        cx = ex;
-                        cz = ez;
-                        break;
-                    case SOUTH:
-                    default:
-                        cx = xx + cx;
-                        cz = zz + cz;
-                        break;
-                    case WEST:
-                        double wx = xx - cz;
-                        double wz = zz + cx;
-                        cx = wx;
-                        cz = wz;
-                }
-            } else { // PLAYER FACING SOUTH DEFAULT
-                cx = xx + cx;
-                cz = zz + cz;
-            }
-
-            return new Location(location.getWorld(), cx.intValue(), cy.intValue(), cz.intValue());
-        };
+        return registry().get(PlacementPlanner.class)
+                .buildCalculateFinalLocationFunction(player, location, onTop, position);
     }
 
-    private Map<String, Integer> checkSpaceIsClear(Function<Location, Location> calculateFinalLocation) {
+    private Map<String, Integer> checkSpaceIsClear(Function<Location, Location> calculateFinalLocation,
+            MaterialIgnoreResolver ignoreResolver) {
         int scale = position.getScale();
         int[] coords = position.next(true);
         Map<String, Integer> blocksUnableToPlace = new HashMap<>();
         while (coords != null) {
             MaterialData materialData = this.selectionGrid[coords[0] / scale][coords[1] / scale][coords[2] / scale];
-            if (materialData == null || materialData.getName() == null || isIgnorable(materialData.getMaterial())) {
+            if (materialData == null || materialData.getName() == null
+                    || ignoreResolver.isIgnorable(materialData.getMaterial(), materialIgnoreList)) {
                 coords = position.next(true);
                 continue;
             }
             Location loc = calculateFinalLocation.apply(new Location(null, coords[2], coords[1], coords[0]));
             Block block = loc.getBlock();
-            if (block != null && !isIgnorable(block.getType())) {
+            if (block != null && !ignoreResolver.isIgnorable(block.getType(), materialIgnoreList)) {
                 Integer count = blocksUnableToPlace.getOrDefault(materialData.getMaterial().name(), 0);
                 blocksUnableToPlace.put(materialData.getMaterial().name(), count + 1);
             }
             coords = position.next(true);
         }
         return blocksUnableToPlace;
-    }
-
-    private Map<String, Integer> checkPlayerHasBLocksInInventory(Player player, boolean removeBlocks,
-            Map<String, Integer> blocksUnableToPlace) {
-        if (player.getGameMode() == GameMode.CREATIVE || player.hasPermission("blu3print.no-block-cost")) {
-            if (removeBlocks && GlobalConfig.isFreePlacementMessageEnabled()) {
-                sendMessage(player, ChatColor.GREEN + "Placing Blu3print for free!");
-            }
-            return new HashMap<>();
-        }
-
-        Map<String, Integer> ingCountCopy = new HashMap<>(ingredientsCount);
-
-        // Discount blocks unable to place
-        boolean forcePlacePenalty = GlobalConfig.getForcePlacePenaltyEnabled();
-        if (player.isSneaking() && (player.hasPermission("blu3print.force-place-discount") || !forcePlacePenalty)) {
-            if (GlobalConfig.isDiscountPlacementMessageEnabled() && forcePlacePenalty) {
-                sendMessage(player, ChatColor.GREEN + "Placing Blu3print for discount as blocks in the way!");
-            }
-            blocksUnableToPlace.forEach((material, amount) -> {
-                Integer count = ingCountCopy.getOrDefault(material, 0);
-                count = count - amount;
-                if (count < 1) {
-                    ingCountCopy.remove(material);
-                } else {
-                    ingCountCopy.put(material, amount);
-                }
-            });
-        }
-        Map<Integer, ItemStack> inventoryBlocks = new HashMap<>();
-        Map<Integer, ItemStack> storageBlocks = new HashMap<>();
-        int inventoryIndex = 0;
-        boolean endOfInventory = false;
-        Inventory inventory = player.getInventory();
-
-        // Filter out storage blocks to a separate list
-        while (!endOfInventory && inventoryIndex < inventory.getSize()) {
-            try {
-                ItemStack itemStack = inventory.getItem(inventoryIndex);
-                if (itemStack == null || itemStack.getAmount() == 0 || itemStack.getType() == Material.AIR) {
-                    inventoryIndex++;
-                    continue;
-                }
-                if (itemStack.getItemMeta() instanceof BlockStateMeta) {
-                    BlockStateMeta bsm = (BlockStateMeta) itemStack.getItemMeta();
-                    if (bsm.getBlockState() instanceof Container) {
-                        storageBlocks.put(inventoryIndex, itemStack);
-                    } else {
-                        inventoryBlocks.put(inventoryIndex, itemStack);
-                    }
-                } else {
-                    inventoryBlocks.put(inventoryIndex, itemStack);
-                }
-                inventoryIndex++;
-            } catch (Exception e) {
-                logger().warning("ERROR checkPlayerHasBLocksInInventory INV SCAN");
-                logger().warning(e.getMessage());
-                e.printStackTrace();
-                endOfInventory = true;
-            }
-        }
-
-        // Process inventory blocks
-        inventoryBlocks.forEach((k, v) -> {
-            String blockName = v.getType().name();
-            if (ingCountCopy.containsKey(blockName)) {
-                int count = ingCountCopy.get(blockName);
-                int stillNeeded = count - v.getAmount();
-                if (stillNeeded < 1) {
-                    ingCountCopy.remove(blockName);
-                    if (removeBlocks) {
-                        v.setAmount(v.getAmount() - count);
-                        inventory.setItem(k, v);
-                    }
-                } else {
-                    ingCountCopy.put(blockName, count);
-                    if (removeBlocks) {
-                        inventory.setItem(k, null);
-                    }
-                }
-            }
-        });
-
-        if (ingCountCopy.isEmpty())
-            return ingCountCopy;
-
-        // process storage blocks
-        storageBlocks.forEach((k, v) -> {
-            BlockStateMeta bsm = (BlockStateMeta) v.getItemMeta();
-            Container container = (Container) bsm.getBlockState();
-            Inventory containerInventory = container.getInventory();
-            Map<Integer, ItemStack> storageInventoryBlocks = new HashMap<>();
-            int storageInventoryIndex = 0;
-            boolean endOfStorageInventory = false;
-            while (!endOfStorageInventory && storageInventoryIndex < containerInventory.getSize()) {
-                try {
-                    ItemStack itemStack = containerInventory.getItem(storageInventoryIndex);
-                    if (itemStack == null || itemStack.getAmount() == 0 || itemStack.getType() == Material.AIR) {
-                        storageInventoryIndex++;
-                        continue;
-                    }
-                    storageInventoryBlocks.put(storageInventoryIndex, itemStack);
-                    storageInventoryIndex++;
-                } catch (Exception e) {
-                    logger().warning("ERROR checkPlayerHasBLocksInInventory BLOCK INV SCAN POSITION " + k + " BLOCK " + v.getType().name());
-                    logger().warning(e.getMessage());
-                    e.printStackTrace();
-                    endOfStorageInventory = true;
-                }
-            }
-
-            storageInventoryBlocks.forEach((ik, iv) -> {
-                String blockName = iv.getType().name();
-                if (ingCountCopy.containsKey(blockName)) {
-                    int count = ingCountCopy.get(blockName);
-                    int stillNeeded = count - iv.getAmount();
-                    if (stillNeeded < 1) {
-                        ingCountCopy.remove(blockName);
-                        if (removeBlocks) {
-                            iv.setAmount(iv.getAmount() - count);
-                            containerInventory.setItem(ik, iv);
-                        }
-                    } else {
-                        ingCountCopy.put(blockName, count);
-                        if (removeBlocks) {
-                            containerInventory.setItem(ik, null);
-                        }
-                    }
-                }
-            });
-            bsm.setBlockState(container);
-            v.setItemMeta(bsm);
-            inventory.setItem(k, v); // update container item in inventory
-            if (ingCountCopy.isEmpty()) {
-                return;
-            }
-        });
-
-        return ingCountCopy;
-    }
-
-    private boolean placeBlock(Player player, Location location, MaterialData materialData) {
-
-        World world = Bukkit.getWorld(location.getWorld().getName());
-        if (world == null) {
-            logger().info("World not found: " + location.getWorld().getName());
-            return false;
-        }
-
-        String complexData = materialData.getComplexData();
-        if (EdgeCaseBlockUtils.isEdgeCaseBlock(materialData)) {
-            EdgeCaseBlockUtils.handleEdgeCasePlacement(player, location, materialData);
-        } else if (complexData != null) {
-            try {
-                BlockData blockData = Bukkit.createBlockData(complexData);
-                world.setBlockData(location, blockData);
-            } catch (Exception e) {
-                /* Tried to apply invalid block data */
-                // e.printStackTrace();
-            }
-        } else {
-            world.setType(location, materialData.getMaterial());
-        }
-        return true;
     }
 
     // EDITING BLU3PRINT SECTION
@@ -432,7 +185,6 @@ public abstract class Blu3printData {
         Pair<Orientation, Rotation> turned = position.calculateTurn(turn);
         int[] newSizes = position.getNewSizes(turned.getA());
         newSizes = position.getNewSizes(turned.getB(), newSizes);
-        updateDirectionalEncodings(turned.getA(), turned.getB());
         return updateManipulatablePosition(
                 new ManipulatablePosition(newSizes[0], newSizes[1], newSizes[2], turned.getA(), turned.getB(), s));
     }
@@ -441,7 +193,6 @@ public abstract class Blu3printData {
         Rotation r = position.getRotation();
         int s = position.getScale();
         int[] newSizes = position.getNewSizes(newOrientation);
-        updateDirectionalEncodings(newOrientation, r);
         return updateManipulatablePosition(
                 new ManipulatablePosition(newSizes[0], newSizes[1], newSizes[2], newOrientation, r, s));
     }
@@ -450,31 +201,13 @@ public abstract class Blu3printData {
         Orientation o = position.getOrientation();
         int s = position.getScale();
         int[] newSizes = position.getNewSizes(newRotation);
-        updateDirectionalEncodings(o, newRotation);
         return updateManipulatablePosition(
                 new ManipulatablePosition(newSizes[0], newSizes[1], newSizes[2], o, newRotation, s));
     }
 
     public String updateEncodingWithScale(Player player, int newScale) {
-        Integer maxScale = GlobalConfig.getMaxScale();
-        if (player != null && maxScale != null && newScale > maxScale) {
-            if (!player.hasPermission("blu3print.no-scale-limit")) {
-                sendMessage(player, ChatColor.RED
-                        + "You do not have permission to increase scale over the max scale limit of " + maxScale + "!");
-                return null;
-            }
-        }
-
-        Integer maxOverallSize = GlobalConfig.getMaxOverallSize();
-        if (player != null && maxOverallSize != null && ((position.getXSize() * newScale) > maxOverallSize ||
-                (position.getYSize() * newScale) > maxOverallSize ||
-                (position.getZSize() * newScale) > maxOverallSize)) {
-            if (!player.hasPermission("blu3print.no-scale-limit") && !player.hasPermission("blu3print.no-size-limit")) {
-                sendMessage(player, ChatColor.RED
-                        + "You do not have permission to increase size over the max overall size limit of "
-                        + maxOverallSize + "!");
-                return null;
-            }
+        if (!registry().get(LimitValidator.class).newScaleAllowed(player, position, newScale)) {
+            return null;
         }
 
         int scale = newScale / position.getScale();
@@ -484,12 +217,6 @@ public abstract class Blu3printData {
             this.ingredientsCount = newCount;
         }
         return updateManipulatablePosition(new ManipulatablePosition(position, newScale));
-    }
-
-    private void updateDirectionalEncodings(Orientation o, Rotation r) {
-        // Map<String, String> ingredientsMapCopy = new HashMap<>(ingredientsMap);
-        // DO NOTHING FOR NOW
-        // this.ingredientsMap = ingredientsMapCopy;
     }
 
     private String updateManipulatablePosition(ManipulatablePosition newPosition) {
@@ -512,75 +239,22 @@ public abstract class Blu3printData {
     }
 
     protected List<String> buildMaterialIgnoreList(Player player, String blu3printUUID) {
-        List<String> ignoreList = new ArrayList<>();
-        if (globalMaterialIgnoreList.isEmpty()) {
-            globalMaterialIgnoreList = GlobalConfig.getIgnoredMaterials();
-        }
-        if (player == null) {
-            return ignoreList;
-        }
-        String playerUUID = player.getUniqueId().toString();
-        PlayerBlu3printConfig pbc = Blueprints.getPlayerBlu3printConfig(playerUUID);
-        if (pbc != null) {
-            if (pbc.uuidMatches(blu3printUUID)) {
-                ignoreList.addAll(pbc.getIgnoredMaterials());
-            } else {
-                player.sendMessage(ChatColor.RED + "Cleared blu3print config as using different blu3print!");
-                Blueprints.setPlayerBlu3printConfig(playerUUID, null);
-            }
-        }
-        PlayerConfig pc = Blueprints.getPlayerConfig(playerUUID);
-        if (pc != null) {
-            ignoreList.addAll(pc.getIgnoredMaterials());
-        } 
-        return ignoreList;
+        return registry().get(MaterialIgnoreResolver.class).resolvePlayerIgnoreList(player, blu3printUUID);
     }
 
     protected boolean isIgnorable(Material material) {
-        return material == null || material.isAir()
-            || materialIgnoreList.contains(material.name().toUpperCase())
-            || globalMaterialIgnoreList.contains(material.name().toUpperCase());
+        return registry().get(MaterialIgnoreResolver.class).isIgnorable(material, materialIgnoreList);
     }
 
-    
     protected boolean playerAllowedToUse(Player player) {
-        int scale = position.getScale();
-        int [] sizes = new int [] { position.getXSize(), position.getYSize(), position.getZSize() };
-
-        Integer maxSize = GlobalConfig.getMaxSize();
-        if (player != null && maxSize != null && sizesExceedLimit(sizes, 1, maxSize)) {
-            if (!player.hasPermission("blu3print.no-size-limit")) {
-                sendMessage(player,ChatColor.RED + "You do not have permission to set size over the max size limit of " + maxSize + "!");
-                return false;
-            }
-        }
-
-        Integer maxScale = GlobalConfig.getMaxScale();
-        if (player != null && maxScale != null && scale > maxScale) {
-            if (!player.hasPermission("blu3print.no-scale-limit")) {
-                sendMessage(player,ChatColor.RED + "You do not have permission to increase scale over the max scale limit of " + maxScale + "!");
-                return false;
-            }
-        }
-
-        Integer maxOverallSize = GlobalConfig.getMaxOverallSize();
-        if (player != null && maxOverallSize != null && sizesExceedLimit(sizes, scale, maxOverallSize)) {
-            if (!player.hasPermission("blu3print.no-scale-limit") && !player.hasPermission("blu3print.no-size-limit")) {
-                sendMessage(player,ChatColor.RED + "You do not have permission to increase size over the max overall size limit of " + maxOverallSize + "!");
-                return false;
-            }
-        }
-
-        return true;
+        return registry().get(LimitValidator.class).playerAllowedToUse(player, position);
     }
 
     protected boolean sizesExceedLimit(int[] sizes, int scale, int max) {
-        for (int size : sizes) {
-            if (size * scale > max) {
-                return true;
-            }
-        }
-        return false;
+        return registry().get(LimitValidator.class).sizesExceedLimit(sizes, scale, max);
     }
 
+    private static ServiceRegistry registry() {
+        return Blueprints.getInstance().getServiceRegistry();
+    }
 }

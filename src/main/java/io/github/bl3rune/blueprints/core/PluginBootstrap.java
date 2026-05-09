@@ -15,6 +15,11 @@ import io.github.bl3rune.blueprints.services.InteractionCooldownService;
 import io.github.bl3rune.blueprints.services.PlayerSessionService;
 import io.github.bl3rune.blueprints.services.RecipeRegistrar;
 import io.github.bl3rune.blueprints.services.UpdateChecker;
+import io.github.bl3rune.blueprints.services.domain.BlockApplicationStrategy;
+import io.github.bl3rune.blueprints.services.domain.InventoryCostCalculator;
+import io.github.bl3rune.blueprints.services.domain.LimitValidator;
+import io.github.bl3rune.blueprints.services.domain.MaterialIgnoreResolver;
+import io.github.bl3rune.blueprints.services.domain.PlacementPlanner;
 import io.github.bl3rune.blueprints.services.persistence.BlueprintRepository;
 import io.github.bl3rune.blueprints.services.persistence.JsonBlueprintRepository;
 
@@ -62,8 +67,15 @@ public final class PluginBootstrap {
         cacheService.loadFromDisk();
         registry.register(BlueprintCacheService.class, cacheService);
 
-        registry.register(PlayerSessionService.class, new PlayerSessionService());
+        PlayerSessionService sessions = new PlayerSessionService();
+        registry.register(PlayerSessionService.class, sessions);
         registry.register(InteractionCooldownService.class, new InteractionCooldownService());
+
+        registry.register(MaterialIgnoreResolver.class, new MaterialIgnoreResolver(sessions));
+        registry.register(PlacementPlanner.class, new PlacementPlanner());
+        registry.register(LimitValidator.class, new LimitValidator());
+        registry.register(InventoryCostCalculator.class, new InventoryCostCalculator(plugin.getLogger()));
+        registry.register(BlockApplicationStrategy.class, new BlockApplicationStrategy(plugin.getLogger()));
 
         registerListeners();
         registerCommands();

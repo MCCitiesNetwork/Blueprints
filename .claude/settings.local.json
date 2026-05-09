@@ -3,7 +3,8 @@
     "allow": [
       "Bash(./gradlew test *)",
       "Bash(git mv *)",
-      "Bash(xargs -0 sed -i 's/\\\\bBlu3PrintPlugin\\\\b/Blueprints/g')"
+      "Bash(xargs -0 sed -i 's/\\\\bBlu3PrintPlugin\\\\b/Blueprints/g')",
+      "Bash(./gradlew build *)"
     ]
   }
 }

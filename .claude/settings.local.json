@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew test *)"
+      "Bash(./gradlew test *)",
+      "Bash(git mv *)",
+      "Bash(xargs -0 sed -i 's/\\\\bBlu3PrintPlugin\\\\b/Blueprints/g')"
     ]
   }
 }

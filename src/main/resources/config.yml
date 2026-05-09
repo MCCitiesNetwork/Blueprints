@@ -1,5 +1,5 @@
-blu3print:
-  max-scale: 10 # Maximum scale of a Blu3Print
+blueprints:
+  max-scale: 10 # Maximum scale of a Blueprint
   max-size: 100 # Maximum size of a Blu3Print
   max-overall-size: 200 # Maximum size * scale of a Blu3Print
   cooldown: 600 # Cooldown in ms between two Blu3print usages

@@ -1,4 +1,8 @@
-# Blu3print Plugin
+# Blueprints Plugin
+
+> The plugin was previously published as **Blu3PrintPlugin**. As of 1.7.6 it
+> is renamed to **Blueprints** — the legacy `blueprints.*` command, permission,
+> and config namespaces are kept as migration aliases for one release window.
 
 [![Latest Release](https://img.shields.io/github/v/release/bl3rune/Blu3Prints-Plugin)](https://github.com/bl3rune/Blu3Prints-Plugin/releases)
 [![Build Status](https://github.com/bl3rune/Blu3Prints-Plugin/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/bl3rune/Blu3Prints-Plugin/actions)
@@ -33,7 +37,7 @@
 - Configuration allows for safeguards on usage and caps on blueprint sizes
 - Blu3print writer has a cooldown to prevent spam
 - Permissions to fine tune usage of blu3prints
-- In-Game `/blu3print.help` command to guide new users
+- In-Game `/blueprints.help` command to guide new users
 
 ## Getting started
 [See the wiki getting started for detailed set up.](https://github.com/bl3rune/Blu3Prints-Plugin/wiki/Getting-Started)
@@ -63,14 +67,14 @@ While holding a completed Blu3print, you can interact by:
 ------
 [See the wiki sharing Blu3prints pages for how to get set up.](https://github.com/bl3rune/Blu3Prints-Plugin/wiki/Sharing-Blu3prints-and-using-between-servers)
 
-Blu3prints can be exported by using a cartography table or by using the `blu3print.export` command whilst holding the blu3print item.
+Blu3prints can be exported by using a cartography table or by using the `blueprints.export` command whilst holding the blu3print item.
 ![Export](https://github.com/bl3rune/Blu3Prints-Plugin/raw/main/images/Export.png "Export")
 This code can be shared to other players and even be used on other servers running this plugin, allowing you to preserve your creations across servers or even showcase them online (visualiser website in the pipeline!)
-To use the encoded blu3prints, simply run the command `/blu3print.import <name> <encoded-string>`
+To use the encoded blu3prints, simply run the command `/blueprints.import <name> <encoded-string>`
 
 
 ## Permissions
-By default all commands apart from `/blu3print.give` should be available for all non OP players.
+By default all commands apart from `/blueprints.give` should be available for all non OP players.
 There are also a default restrictions on the maximum size/scale of a blu3print for safety reasons. This can be configured in the `config.yml` file. 
 
 [See the wiki permissions page for how to get set up](https://github.com/bl3rune/Blu3Prints-Plugin/wiki/Permissions)
@@ -79,7 +83,7 @@ There are also a default restrictions on the maximum size/scale of a blu3print f
 
 
 ## Help
-Players can use the `/blu3print.help` command to get help with usage in-game or [look at the wiki pages](https://github.com/bl3rune/Blu3Prints-Plugin/wiki)
+Players can use the `/blueprints.help` command to get help with usage in-game or [look at the wiki pages](https://github.com/bl3rune/Blu3Prints-Plugin/wiki)
 
 ![Help](https://github.com/bl3rune/Blu3Prints-Plugin/raw/main/images/Help.png "Help")
 

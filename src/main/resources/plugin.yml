@@ -1,178 +1,274 @@
-name: Blu3PrintPlugin
+name: Blueprints
 version: '1.7.5'
-main: io.github.bl3rune.blu3printPlugin.Blu3PrintPlugin
+main: io.github.bl3rune.blueprints.Blueprints
 api-version: '1.18'
-prefix: Blu3Print
+prefix: Blueprints
 authors: [ bl3rune ]
 description: A dynamic blueprint tool that allows players to capture/build/share/edit/preview designs
 website: https://github.com/bl3rune/Blu3Prints-Plugin
 commands:
-  blu3print:
-    description: Blu3printPlugin menu usage
+  blueprints:
+    description: Blueprints menu usage
     usage: /<command>
-    permission: blu3print
-    permission-message: You don't have permission to use the Blu3print menu
-    aliases: [ blu3 ]
-  blu3print.duplicate:
-    description: Duplicate the Blu3Print currently held (If a blank Blu3Print is in inventory)
+    permission: blueprints
+    permission-message: You don't have permission to use the Blueprints menu
+    aliases: [ blu3, blu3print ]
+  blueprints.duplicate:
+    description: Duplicate the Blueprint currently held (If a blank Blueprint is in inventory)
     usage: /<command>
-    permission: blu3print.duplicate
+    permission: blueprints.duplicate
     permission-message: You don't have permission duplicate this
-    aliases: [ blu3.duplicate ]
-  blu3print.rotate:
-    description: Rotate the Blu3Print currently held
+    aliases: [ blu3.duplicate, blu3print.duplicate ]
+  blueprints.rotate:
+    description: Rotate the Blueprint currently held
     usage: /<command> <#optional# rotation> (default next rotation)
-    permission: blu3print.rotate
+    permission: blueprints.rotate
     permission-message: You don't have permission to rotate this
-    aliases: [ blu3.rotate ]
-  blu3print.turn:
-    description: Turn the Blu3Print currently held
+    aliases: [ blu3.rotate, blu3print.rotate ]
+  blueprints.turn:
+    description: Turn the Blueprint currently held
     usage: /<command> <turn>
-    permission: blu3print.turn
+    permission: blueprints.turn
     permission-message: You don't have permission to turn this
-    aliases: [ blu3.turn ]
-  blu3print.face:
-    description: Change the direction of the Blu3Print currently held
+    aliases: [ blu3.turn, blu3print.turn ]
+  blueprints.face:
+    description: Change the direction of the Blueprint currently held
     usage: /<command> <#optional# direction> (default next face)
-    permission: blu3print.face
+    permission: blueprints.face
     permission-message: You don't have permission to change the direction of this
-    aliases: [ blu3.face ]
-  blu3print.import:
-    description: Import a Blu3Print from a string to the current held Blu3Print
+    aliases: [ blu3.face, blu3print.face ]
+  blueprints.import:
+    description: Import a Blueprint from a string to the current held Blueprint
     usage: /<command> <name> <encodedString>
-    permission: blu3print.import
+    permission: blueprints.import
     permission-message: You don't have permission to import
-    aliases: [ blu3.import ]
-  blu3print.export:
-    description: Export the Blu3Print currently held to a string
+    aliases: [ blu3.import, blu3print.import ]
+  blueprints.export:
+    description: Export the Blueprint currently held to a string
     usage: /<command>
-    permission: blu3print.export
+    permission: blueprints.export
     permission-message: You don't have permission to export
-    aliases: [ blu3.export ]
-  blu3print.scale:
-    description: Change the scale of the Blu3Print currently held
+    aliases: [ blu3.export, blu3print.export ]
+  blueprints.scale:
+    description: Change the scale of the Blueprint currently held
     usage: /<command> <#optional# scale> (default current * 2)
-    permission: blu3print.scale
+    permission: blueprints.scale
     permission-message: You don't have permission to change the scale of this
-    aliases: [ blu3.scale ]
-  blu3print.name:
-    description: Set the name of the Blu3Print currently held
+    aliases: [ blu3.scale, blu3print.scale ]
+  blueprints.name:
+    description: Set the name of the Blueprint currently held
     usage: /<command> <name>
-    permission: blu3print.name
+    permission: blueprints.name
     permission-message: You don't have permission to rename this
-    aliases: [ blu3.name ]
-  blu3print.give:
-    description: Gives player a blu3print
+    aliases: [ blu3.name, blu3print.name ]
+  blueprints.give:
+    description: Gives player a blueprint
     usage: /<command> <#optional# player>
-    permission: blu3print.give
-    permission-message: You don't have permission to give players a blu3print writer
-    aliases: [ blu3.give ]
-  blu3print.help:
-    description: Get help for Blu3PrintPlugin
+    permission: blueprints.give
+    permission-message: You don't have permission to give players a blueprint writer
+    aliases: [ blu3.give, blu3print.give ]
+  blueprints.help:
+    description: Get help for Blueprints
     usage: /<command>
-    permission: blu3print.help
-    permission-message: You don't have permission to get help for Blu3PrintPlugin
-    aliases: [ blu3.help ]
-  blu3print.config:
-    description: Set per-player-per-blu3print config for Blu3prints
+    permission: blueprints.help
+    permission-message: You don't have permission to get help for Blueprints
+    aliases: [ blu3.help, blu3print.help ]
+  blueprints.config:
+    description: Set per-player-per-blueprint config for Blueprints
     usage: /<command> <config-type> <value>
-    permission: blu3print.config
-    permission-message: You don't have permission to set config for each Blu3print
-    aliases: [ blu3.config ]
-  blu3print.player-config:
-    description: Set player config for Blu3prints
+    permission: blueprints.config
+    permission-message: You don't have permission to set config for each Blueprint
+    aliases: [ blu3.config, blu3print.config ]
+  blueprints.player-config:
+    description: Set player config for Blueprints
     usage: /<command> <config-type> <value>
-    permission: blu3print.player-config
-    permission-message: You don't have permission to set player config for Blu3print Plugin
-    aliases: [ blu3.player ]
-  blu3print.global-config:
-    description: Set global config for Blu3prints
+    permission: blueprints.player-config
+    permission-message: You don't have permission to set player config for Blueprints
+    aliases: [ blu3.player, blu3print.player-config ]
+  blueprints.global-config:
+    description: Set global config for Blueprints
     usage: /<command> <config-type> <value>
-    permission: blu3print.global-config
-    permission-message: You don't have permission to set global config for Blu3print Plugin
-    aliases: [ blu3.global ]
+    permission: blueprints.global-config
+    permission-message: You don't have permission to set global config for Blueprints
+    aliases: [ blu3.global, blu3print.global-config ]
 permissions:
-  blu3print.*:
+  blueprints.*:
     default: false
-    description: Allowed to use all Blu3PrintPlugin commands with no restrictions or costs
+    description: Allowed to use all Blueprints commands with no restrictions or costs
     children:
-      blu3print: true
-      blu3print.duplicate: true
-      blu3print.rotate: true
-      blu3print.turn: true
-      blu3print.face: true
-      blu3print.import: true
-      blu3print.export: true
-      blu3print.scale: true
-      blu3print.name: true
-      blu3print.help: true
-      blu3print.holograms: true
-      blu3print.config: true
-      blu3print.no-size-limit: true
-      blu3print.no-scale-limit: true
-      blu3print.force-place-discount: true
-      blu3print.no-block-cost: true
-      blu3print.give: true
-      blu3print.update-available-message: true
-      blu3print.player-config: true
-      blu3print.global-config: true
-  blu3print.basics:
-    description: Allowed to use Blu3Prints
+      blueprints: true
+      blueprints.duplicate: true
+      blueprints.rotate: true
+      blueprints.turn: true
+      blueprints.face: true
+      blueprints.import: true
+      blueprints.export: true
+      blueprints.scale: true
+      blueprints.name: true
+      blueprints.help: true
+      blueprints.holograms: true
+      blueprints.config: true
+      blueprints.no-size-limit: true
+      blueprints.no-scale-limit: true
+      blueprints.force-place-discount: true
+      blueprints.no-block-cost: true
+      blueprints.give: true
+      blueprints.update-available-message: true
+      blueprints.player-config: true
+      blueprints.global-config: true
+  blueprints.basics:
+    description: Allowed to use Blueprints
     default: not op
     children:
-      blu3print: true
-      blu3print.duplicate: true
-      blu3print.rotate: true
-      blu3print.turn: true
-      blu3print.face: true
-      blu3print.import: true
-      blu3print.export: true
-      blu3print.scale: true
-      blu3print.name: true
-      blu3print.help: true
-      blu3print.holograms: true
-      blu3print.config: true
-      blu3print.player-config: true
-  blu3print:
-    description: Allowed to get Blu3PrintPlugin usage
-  blu3print.duplicate:
-    description: Allowed to duplicate the complete Blu3Print currently held
-  blu3print.rotate:
-    description: Allowed to rotate the Blu3Print currently held
-  blu3print.turn:
-    description: Allowed to turn the Blu3Print currently held
-  blu3print.face:
-    description: Allowed to change the direction of the Blu3Print currently held
-  blu3print.import:
-    description: Allowed to import a Blu3Print from a string  
-  blu3print.export:
-    description: Allowed to export the Blu3Print currently held
-  blu3print.scale:
-    description: Allowed to change the scale of the Blu3Print currently held
-  blu3print.no-size-limit:
-    description: No restrictions on size of Blu3prints
-  blu3print.no-scale-limit:
-    description: No restrictions on scaling of Blu3prints
-  blu3print.force-place-discount:
+      blueprints: true
+      blueprints.duplicate: true
+      blueprints.rotate: true
+      blueprints.turn: true
+      blueprints.face: true
+      blueprints.import: true
+      blueprints.export: true
+      blueprints.scale: true
+      blueprints.name: true
+      blueprints.help: true
+      blueprints.holograms: true
+      blueprints.config: true
+      blueprints.player-config: true
+  blueprints:
+    description: Allowed to get Blueprints usage
+  blueprints.duplicate:
+    description: Allowed to duplicate the complete Blueprint currently held
+  blueprints.rotate:
+    description: Allowed to rotate the Blueprint currently held
+  blueprints.turn:
+    description: Allowed to turn the Blueprint currently held
+  blueprints.face:
+    description: Allowed to change the direction of the Blueprint currently held
+  blueprints.import:
+    description: Allowed to import a Blueprint from a string
+  blueprints.export:
+    description: Allowed to export the Blueprint currently held
+  blueprints.scale:
+    description: Allowed to change the scale of the Blueprint currently held
+  blueprints.no-size-limit:
+    description: No restrictions on size of Blueprints
+  blueprints.no-scale-limit:
+    description: No restrictions on scaling of Blueprints
+  blueprints.force-place-discount:
     default: false
-    description: Force placing Blu3prints no longer costs blocks unable to place
-  blu3print.no-block-cost:
+    description: Force placing Blueprints no longer costs blocks unable to place
+  blueprints.no-block-cost:
     default: false
-    description: Removes block cost for placing Blu3prints in survival
-  blu3print.name:
-    description: Allowed to set the name of the Blu3Print currently held
-  blu3print.give:
-    description: Allowed to give blank Blu3prints
-  blu3print.help:
-    description: Allowed to ask for help with the Blu3PrintPlugin
-  blu3print.holograms:
+    description: Removes block cost for placing Blueprints in survival
+  blueprints.name:
+    description: Allowed to set the name of the Blueprint currently held
+  blueprints.give:
+    description: Allowed to give blank Blueprints
+  blueprints.help:
+    description: Allowed to ask for help with Blueprints
+  blueprints.holograms:
     description: Allowed to place hologram previews
-  blu3print.config:
-    description: Allowed to set per-player config for Blu3prints
-  blu3print.update-available-message:
+  blueprints.config:
+    description: Allowed to set per-player config for Blueprints
+  blueprints.update-available-message:
     default: op
     description: Display a message on login when an update is available
+  blueprints.player-config:
+    description: Allows players to configure their own configuration options for Blueprints
+  blueprints.global-config:
+    description: Allowed to set global configuration options for Blueprints
+  # --- Phase 1 migration aliases ---
+  # Legacy umbrella permissions still grant the new ones via children, so any
+  # operator who already granted blu3print.* / blu3print.basics keeps working.
+  blu3print.*:
+    default: false
+    description: (Legacy alias of blueprints.*) Grants all Blueprints permissions
+    children:
+      blueprints.*: true
+  blu3print.basics:
+    default: not op
+    description: (Legacy alias of blueprints.basics) Grants the standard Blueprints permission set
+    children:
+      blueprints.basics: true
+  blu3print:
+    description: (Legacy alias of blueprints)
+    children:
+      blueprints: true
+  blu3print.duplicate:
+    description: (Legacy alias of blueprints.duplicate)
+    children:
+      blueprints.duplicate: true
+  blu3print.rotate:
+    description: (Legacy alias of blueprints.rotate)
+    children:
+      blueprints.rotate: true
+  blu3print.turn:
+    description: (Legacy alias of blueprints.turn)
+    children:
+      blueprints.turn: true
+  blu3print.face:
+    description: (Legacy alias of blueprints.face)
+    children:
+      blueprints.face: true
+  blu3print.import:
+    description: (Legacy alias of blueprints.import)
+    children:
+      blueprints.import: true
+  blu3print.export:
+    description: (Legacy alias of blueprints.export)
+    children:
+      blueprints.export: true
+  blu3print.scale:
+    description: (Legacy alias of blueprints.scale)
+    children:
+      blueprints.scale: true
+  blu3print.name:
+    description: (Legacy alias of blueprints.name)
+    children:
+      blueprints.name: true
+  blu3print.give:
+    description: (Legacy alias of blueprints.give)
+    children:
+      blueprints.give: true
+  blu3print.help:
+    description: (Legacy alias of blueprints.help)
+    children:
+      blueprints.help: true
+  blu3print.config:
+    description: (Legacy alias of blueprints.config)
+    children:
+      blueprints.config: true
   blu3print.player-config:
-   description: Allows players to configure their own configuration options for the Blu3PrintPlugin
+    description: (Legacy alias of blueprints.player-config)
+    children:
+      blueprints.player-config: true
   blu3print.global-config:
-    description: Allowed to set global configuration options for the Blu3PrintPlugin
+    description: (Legacy alias of blueprints.global-config)
+    children:
+      blueprints.global-config: true
+  blu3print.holograms:
+    description: (Legacy alias of blueprints.holograms)
+    children:
+      blueprints.holograms: true
+  blu3print.no-size-limit:
+    description: (Legacy alias of blueprints.no-size-limit)
+    children:
+      blueprints.no-size-limit: true
+  blu3print.no-scale-limit:
+    description: (Legacy alias of blueprints.no-scale-limit)
+    children:
+      blueprints.no-scale-limit: true
+  blu3print.force-place-discount:
+    default: false
+    description: (Legacy alias of blueprints.force-place-discount)
+    children:
+      blueprints.force-place-discount: true
+  blu3print.no-block-cost:
+    default: false
+    description: (Legacy alias of blueprints.no-block-cost)
+    children:
+      blueprints.no-block-cost: true
+  blu3print.update-available-message:
+    default: op
+    description: (Legacy alias of blueprints.update-available-message)
+    children:
+      blueprints.update-available-message: true

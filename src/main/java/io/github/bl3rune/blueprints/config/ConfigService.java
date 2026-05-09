@@ -37,8 +37,10 @@ public final class ConfigService {
     }
 
     public void refresh(JavaPlugin plugin) {
-        FileConfiguration config = plugin.getConfig();
+        refresh(plugin.getConfig());
+    }
 
+    public void refresh(FileConfiguration config) {
         Integer maxSize = readInteger(config, GConfig.MAX_SIZE);
         Integer maxScale = readInteger(config, GConfig.MAX_SCALE);
         Integer maxOverallSize = readInteger(config, GConfig.MAX_OVERALL_SIZE);
